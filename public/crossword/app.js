@@ -292,7 +292,7 @@ let timerInterval = null;
 let isPaused = false;
 let soundEnabled = true;
 let isSolved = false;
-const CROSSWORD_API_URL = 'http://localhost:3000/api/crossword';
+const CROSSWORD_API_URL = 'https://neuroscienceolympiad-backend.onrender.com/api/crossword';
 
 // Audio Context for synthesized retro chimes
 let audioCtx = null;
