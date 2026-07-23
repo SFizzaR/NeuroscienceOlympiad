@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An interactive clinical escape room for the NeuroScience Olympiad. Diagnose 4 patients with cranial nerve defects to solve the security passcode.">
+  <title>NeuroScience Olympiad - Clinical Escape Room</title>
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- Header -->
+    <header class="glass-panel" id="app-header">
+      <div class="brand">
+        <h1>NEUROSCIENCE OLYMPIAD</h1>
+        <span id="room-header-title">CLINICAL ESCAPE ROOM • ROOM 1/6</span>
+      </div>
+      <div class="header-status">
+        <div class="team-badge" id="header-team-badge" style="display: none;">
+          <span>Active Team</span>
+          <span id="team-name-display">Team Alpha</span>
+        </div>
+        <div class="timer-display" id="timer-display" style="display: none;">00:00.0</div>
+      </div>
+    </header>
+
+    <!-- INTRO SCREEN -->
+    <div id="intro-screen" class="screen active">
+      <div class="intro-card glass-panel">
+        <div class="intro-logo">
+          <!-- Brain SVG with neon details -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 15C33 15 28 26 28 36c0 6 2 9 5 12c-4 4-7 10-7 17c0 10 9 16 19 18c1-5 4-8 5-11c-2-1-4-2-4-5c0-4 4-7 7-7c1 0 2 0 3 1c1-5 5-9 10-9s9 4 10 9c1-1 2-1 3-1c3 0 7 3 7 7c0 3-2 4-4 5c1 3 4 6 5 11c10-2 19-8 19-18c0-7-3-13-7-17c3-3 5-6 5-12c0-10-5-21-22-21" fill="none" stroke="#a020f0" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M50 15v66M38 28c-3 0-6 3-6 6M62 28c3 0 6 3 6 6M33 50c-2 0-4 2-4 4M67 50c2 0 4 2 4 4" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="50" cy="36" r="3" fill="#ff007f"/>
+            <circle cx="36" cy="62" r="3" fill="#ff007f"/>
+            <circle cx="64" cy="62" r="3" fill="#ff007f"/>
+          </svg>
+        </div>
+        <h2>Clinical Escape Ward</h2>
+        <p>
+          Welcome, Olympiads. You have been sealed in the Neuro-Diagnostics Lab. 
+          To escape, you must complete four successive clinical rounds. In each round, examine the four patients, identify their neurological abnormalities, and enter the corresponding 4-digit code in order (A-B-C-D) on the terminal security keypad.
+        </p>
+        <div class="input-group">
+          <label for="team-name-input">Enter Team Name</label>
+          <input type="text" id="team-name-input" placeholder="e.g. Synaptic Solvers" autocomplete="off" max="30">
+        </div>
+        <div class="input-group">
+          <label for="access-code-input">Enter Access Code</label>
+          <input type="text" id="access-code-input" placeholder="Provided by your proctor" autocomplete="off" maxlength="20" style="text-transform: uppercase; letter-spacing: 2px;">
+        </div>
+        <button id="start-btn" class="btn-neon">INITIALIZE SECURITY BYPASS</button>
+      </div>
+    </div>
+
+    <!-- MAIN GAME SCREEN -->
+    <div id="main-screen" class="screen">
+      <!-- Patients Ward -->
+      <div class="ward-view">
+        <div class="section-title">
+          <div class="pulse-dot"></div>
+          <h2 id="room-title-display">ROOM 1: CRANIAL NERVE DEFECTS</h2>
+        </div>
+
+        <div class="patient-grid">
+          <!-- Patient A Card (CN III) -->
+          <div class="patient-card glass-panel" id="card-patient-a" data-patient="a">
+            <div class="patient-header">
+              <div class="patient-info">
+                <span class="patient-id">PATIENT A</span>
+                <span class="patient-name">Arthur Pendelton</span>
+              </div>
+              <span class="status-badge unexamined" id="badge-patient-a">Unexamined</span>
+            </div>
+            
+            <div class="ekg-container">
+              <svg width="100%" height="100%" viewBox="0 0 300 50">
+                <path class="ekg-line" d="M0 25 L40 25 L50 10 L58 40 L65 25 L120 25 L130 10 L138 40 L145 25 L200 25 L210 10 L218 40 L225 25 L300 25" />
+              </svg>
+            </div>
+
+            <p class="patient-summary">
+              A 54-year-old male who woke up with a heavy droop in his right eyelid and claims his vision is doubled.
+            </p>
+
+            <div class="patient-card-footer">
+              <button class="examine-btn-small">EXAMINE PATIENT</button>
+            </div>
+          </div>
+
+          <!-- Patient B Card (CN VII) -->
+          <div class="patient-card glass-panel" id="card-patient-b" data-patient="b">
+            <div class="patient-header">
+              <div class="patient-info">
+                <span class="patient-id">PATIENT B</span>
+                <span class="patient-name">Beatrix Miller</span>
+              </div>
+              <span class="status-badge unexamined" id="badge-patient-b">Unexamined</span>
+            </div>
+
+            <div class="ekg-container">
+              <svg width="100%" height="100%" viewBox="0 0 300 50">
+                <path class="ekg-line" d="M0 25 L30 25 L40 5 L48 45 L55 25 L110 25 L120 5 L128 45 L135 25 L190 25 L200 5 L208 45 L215 25 L300 25" />
+              </svg>
+            </div>
+
+            <p class="patient-summary">
+              A 29-year-old female complaining that water spills out of the right side of her mouth when drinking and she can't close her right eye.
+            </p>
+
+            <div class="patient-card-footer">
+              <button class="examine-btn-small">EXAMINE PATIENT</button>
+            </div>
+          </div>
+
+          <!-- Patient C Card (CN V) -->
+          <div class="patient-card glass-panel" id="card-patient-c" data-patient="c">
+            <div class="patient-header">
+              <div class="patient-info">
+                <span class="patient-id">PATIENT C</span>
+                <span class="patient-name">Charles Dupont</span>
+              </div>
+              <span class="status-badge unexamined" id="badge-patient-c">Unexamined</span>
+            </div>
+
+            <div class="ekg-container">
+              <svg width="100%" height="100%" viewBox="0 0 300 50">
+                <path class="ekg-line" d="M0 25 L50 25 L60 12 L68 38 L75 25 L140 25 L150 12 L158 38 L165 25 L230 25 L240 12 L248 38 L255 25 L300 25" />
+              </svg>
+            </div>
+
+            <p class="patient-summary">
+              A 42-year-old male who reports that his face feels completely numb on the right side while shaving, and chewing feels awkward.
+            </p>
+
+            <div class="patient-card-footer">
+              <button class="examine-btn-small">EXAMINE PATIENT</button>
+            </div>
+          </div>
+
+          <!-- Patient D Card (CN VI) -->
+          <div class="patient-card glass-panel" id="card-patient-d" data-patient="d">
+            <div class="patient-header">
+              <div class="patient-info">
+                <span class="patient-id">PATIENT D</span>
+                <span class="patient-name">Diana Prince</span>
+              </div>
+              <span class="status-badge unexamined" id="badge-patient-d">Unexamined</span>
+            </div>
+
+            <div class="ekg-container">
+              <svg width="100%" height="100%" viewBox="0 0 300 50">
+                <path class="ekg-line" d="M0 25 L35 25 L45 8 L53 42 L60 25 L115 25 L125 8 L133 42 L140 25 L195 25 L205 8 L213 42 L220 25 L300 25" />
+              </svg>
+            </div>
+
+            <p class="patient-summary">
+              A 37-year-old female presenting with double vision. You notice her right eye looks slightly deviated inwards toward her nose.
+            </p>
+
+            <div class="patient-card-footer">
+              <button class="examine-btn-small">EXAMINE PATIENT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control Terminal & Keypad -->
+      <div class="control-terminal glass-panel">
+        <div class="terminal-header">
+          <span class="terminal-title">SECURITY OUTPOST</span>
+          <div class="door-status-display">
+            <div class="status-indicator" id="door-indicator"></div>
+            <span id="door-status-text" class="glow-text-pink" style="font-family: var(--font-display); font-size: 11px; font-weight: bold; letter-spacing: 1px;">LOCKED</span>
+          </div>
+        </div>
+
+        <div class="terminal-body">
+          <div class="lock-art" id="lock-illustration">
+            <!-- Neon pad lock SVG -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
+            </svg>
+          </div>
+
+          <div class="terminal-instructions" id="terminal-instructions-text">
+            Enter the 4-digit diagnostic PIN to release the electromagnetic locks. The code is formed by the cranial nerve numbers corresponding to each patient's defect, ordered from <strong>Patient A to Patient D</strong>.
+          </div>
+
+          <!-- Keypad Display and Buttons -->
+          <div class="keypad-container" id="keypad-wrapper">
+            <div class="keypad-display" id="pin-display">_ _ _ _</div>
+            <div id="attempts-display" style="font-size: 11px; font-family: var(--font-display); color: var(--pink-neon); letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 0 5px var(--pink-glow);">ATTEMPTS REMAINING: 3/3</div>
+            <div class="keypad-grid">
+              <button class="keypad-btn btn-num">1</button>
+              <button class="keypad-btn btn-num">2</button>
+              <button class="keypad-btn btn-num">3</button>
+              <button class="keypad-btn btn-num">4</button>
+              <button class="keypad-btn btn-num">5</button>
+              <button class="keypad-btn btn-num">6</button>
+              <button class="keypad-btn btn-num">7</button>
+              <button class="keypad-btn btn-num">8</button>
+              <button class="keypad-btn btn-num">9</button>
+              <button class="keypad-btn action-btn btn-clear">CLR</button>
+              <button class="keypad-btn btn-num">0</button>
+              <button class="keypad-btn action-btn btn-submit">ENT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESCAPE SCREEN (RESULTS) -->
+    <div id="escape-screen" class="screen">
+      <div class="escape-card glass-panel">
+        <h2 class="congrats-title">SYSTEM BYPASSED</h2>
+        <div class="glow-text-blue" style="font-family: var(--font-display); font-size: 16px; letter-spacing: 2px;">DOOR LOCKS DEACTIVATED</div>
+        
+        <!-- Room Performance Stats -->
+        <div class="performance-stats-box" style="display: flex; justify-content: space-around; gap: 20px; margin-top: 24px; width: 100%;">
+          <div class="stat-card" style="flex: 1; padding: 12px; background: rgba(57, 255, 20, 0.05); border: 1px solid rgba(57, 255, 20, 0.2); border-radius: 8px; font-family: var(--font-display);">
+            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">ROOMS SUCCEEDED</div>
+            <div id="rooms-succeeded-count" style="font-size: 24px; color: var(--green-neon); text-shadow: 0 0 10px var(--green-glow); font-weight: bold;">0/6</div>
+          </div>
+          <div class="stat-card" style="flex: 1; padding: 12px; background: rgba(255, 0, 127, 0.05); border: 1px solid rgba(255, 0, 127, 0.2); border-radius: 8px; font-family: var(--font-display);">
+            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">ROOMS FAILED</div>
+            <div id="rooms-failed-count" style="font-size: 24px; color: var(--pink-neon); text-shadow: 0 0 10px var(--pink-glow); font-weight: bold;">0/6</div>
+          </div>
+        </div>
+
+        <div class="escape-time-box" style="margin-top: 20px;">
+          <div class="escape-time-label">Completion Time</div>
+          <div class="escape-time-val" id="final-time-display">00:00.0</div>
+        </div>
+
+        <div class="team-summary-text" id="escape-summary-text">
+          Congratulations, <strong id="summary-team-name" class="glow-text-pink">Team Alpha</strong>! 
+          You successfully solved all the clinical puzzles and escaped the Neuro-Diagnostics Lab!
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-neon btn-primary-neon" id="share-btn" style="width: 100%;">COPY RUN SUMMARY</button>
+        </div>
+        <div class="btn-group" style="margin-top: 12px;">
+          <button class="btn-neon" id="start-crossword-btn" style="width: 100%;">START CROSSWORD →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSITION SCREEN -->
+    <div id="transition-screen" class="screen">
+      <div class="escape-card glass-panel" id="transition-card" style="border-color: var(--blue-neon); box-shadow: 0 0 35px rgba(0, 240, 255, 0.2);">
+        <h2 class="congrats-title" id="transition-title" style="color: var(--green-neon); text-shadow: 0 0 15px var(--green-glow);">ACCESS GRANTED</h2>
+        <div class="glow-text-blue" id="transition-room-cleared" style="font-family: var(--font-display); font-size: 16px; letter-spacing: 2px; text-transform: uppercase;">ROOM 1 COMPLETED</div>
+        
+        <div style="margin: 30px 0; width: 100%;">
+          <div id="transition-next-room" style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; font-family: var(--font-display);">LOADING ROOM 2...</div>
+          <div class="transition-bar" style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 3px; overflow: hidden; border: 1px solid var(--border-glass);">
+            <div id="transition-progress" style="width: 0%; height: 100%; background: var(--blue-neon); box-shadow: 0 0 10px var(--blue-neon); transition: width 3s linear;"></div>
+          </div>
+        </div>
+        
+        <div style="font-size: 11px; color: var(--text-secondary); letter-spacing: 3px; text-transform: uppercase; font-family: var(--font-display);">DECOMPRESSING LAB ENVIRONMENT</div>
+      </div>
+    </div>
+
+    <!-- LOSS SCREEN -->
+    <div id="loss-screen" class="screen">
+      <div class="escape-card glass-panel" style="border-color: var(--pink-neon); box-shadow: 0 0 35px rgba(255, 0, 127, 0.2);">
+        <h2 class="congrats-title" style="color: var(--pink-neon); text-shadow: 0 0 15px var(--pink-glow);">SYSTEM LOCKOUT</h2>
+        <div class="glow-text-pink" style="font-family: var(--font-display); font-size: 16px; letter-spacing: 2px;">TIME EXPIRED - LOCKS PERMANENT</div>
+        
+        <div class="escape-time-box">
+          <div class="escape-time-label" style="color: var(--text-secondary);">TIME REMAINING</div>
+          <div class="escape-time-val" style="color: var(--pink-neon); text-shadow: 0 0 15px var(--pink-glow);">00:00.0</div>
+        </div>
+
+        <div class="team-summary-text" id="loss-summary-text">
+          System lockout initiated for <strong id="loss-team-name" class="glow-text-pink">Team Alpha</strong>. 
+          You failed to solve the clinical puzzles and escape the laboratory within the 45-minute time limit. The electromagnetic doors have been permanently sealed.
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-neon" id="start-crossword-btn-loss" style="width: 100%;">START CROSSWORD →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CROSSWORD SCREEN -->
+    <div id="crossword-screen" class="screen">
+      <div class="crossword-topbar">
+        <button class="btn-outline" id="back-from-crossword-btn">← BACK TO RESULTS</button>
+        <span class="crossword-topbar-title">NEURO-CLINICAL CROSSWORD</span>
+      </div>
+      <iframe id="crossword-frame" title="Neuro-Clinical Crossword" src="about:blank"></iframe>
+    </div>
+
+    <!-- COMBINED SUMMARY SCREEN -->
+    <div id="combined-summary-screen" class="screen">
+      <div class="escape-card glass-panel" style="max-width: 640px;">
+        <h2 class="congrats-title">FINAL DEBRIEF</h2>
+        <div class="glow-text-blue" style="font-family: var(--font-display); font-size: 14px; letter-spacing: 2px;">COMBINED PERFORMANCE REPORT</div>
+
+        <div class="team-summary-text" style="margin-top: 16px;">
+          Team <strong id="combined-team-name" class="glow-text-pink">Team Alpha</strong>
+        </div>
+
+        <div class="combined-score-hero">
+          <div class="combined-score-label">TOTAL SCORE</div>
+          <div class="combined-score-value" id="combined-total-score">0 / 1200</div>
+        </div>
+
+        <div class="combined-breakdown">
+          <div class="combined-section">
+            <div class="combined-section-title">🧠 Clinical Escape Room</div>
+            <div class="combined-row"><span>Completion Time</span><span id="combined-escape-time">00:00.0</span></div>
+            <div class="combined-row"><span>Rooms Succeeded</span><span id="combined-rooms">0/6</span></div>
+            <div class="combined-row"><span>Room Points</span><span id="combined-room-points">0</span></div>
+            <div class="combined-row" style="font-size: 12px; color: var(--text-secondary); border-bottom: none;"><span id="combined-attempt-breakdown">1st try: 0 · 2nd try: 0 · 3rd try: 0 · Failed: 0</span></div>
+            <div class="combined-row"><span>Speed Bonus</span><span id="combined-escape-bonus">0</span></div>
+          </div>
+
+          <div class="combined-section">
+            <div class="combined-section-title">📝 Neuro-Clinical Crossword</div>
+            <div class="combined-row"><span>Completion Time</span><span id="combined-crossword-time">00:00</span></div>
+            <div class="combined-row"><span>Hints Used</span><span id="combined-crossword-hints">0</span></div>
+            <div class="combined-row"><span>Clinical Rating</span><span id="combined-crossword-rank">-</span></div>
+            <div class="combined-row"><span>Crossword Points</span><span id="combined-crossword-points">0</span></div>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top: 20px;">
+          <button class="btn-outline" id="combined-restart-btn">RE-LOCK LAB</button>
+          <button class="btn-neon btn-primary-neon" id="combined-share-btn">COPY FULL SUMMARY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLINICAL EXAMINATION MODAL -->
+  <div class="modal-overlay" id="exam-modal">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3 id="modal-patient-id">PATIENT A - EXAMINATION</h3>
+        <button class="close-modal-btn" id="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          <!-- Left: Case Details -->
+          <div class="modal-vignette">
+          <div class="vignette-specs">
+            <div class="spec-row">
+              <span>Patient Name:</span>
+              <span id="vignette-name">Arthur Pendelton</span>
+            </div>
+            <div class="spec-row">
+              <span>Age/Sex:</span>
+              <span id="vignette-age-sex">54 / Male</span>
+            </div>
+            <div class="spec-row">
+              <span>Vital Status:</span>
+              <span id="vignette-vitals" style="color: var(--green-neon);">Stable (HR 72)</span>
+            </div>
+          </div>
+          
+          <div class="vignette-label">Chief Complaint & History</div>
+          <div class="vignette-history" id="vignette-text">
+            Patient presents with double vision and a severe droop in his right eyelid.
+          </div>
+        </div>
+
+        <!-- Right: Diagnostic Interactive Area -->
+        <div class="diagnostic-sandbox">
+          <div class="sandbox-header">
+            <span class="sandbox-title">CLINICAL DIAGNOSTIC SANDBOX</span>
+            <div class="sandbox-tools" id="sandbox-tools-container">
+              <!-- Dynamically populated buttons -->
+            </div>
+          </div>
+
+          <div class="sandbox-playground" id="sandbox-playground-area">
+            <!-- Flashlight beam overlay used in Patient A -->
+            <div class="flashlight-beam" id="flashlight-beam"></div>
+            
+            <div class="sandbox-instruction" id="sandbox-instruction-text">
+              Select a clinical test tool above to begin.
+            </div>
+
+            <!-- Intermediary containers for each patient's graphics -->
+            
+            <!-- Patient A: Eyes (CN III) -->
+            <div class="eyes-container" id="container-eyes-cn3" style="display: none;">
+              <!-- Right Eye (Affected: Ptosis, Down & Out, Blown Pupil) -->
+              <div class="eye ptosis affected" id="eye-right-cn3" style="transform: translate(-12px, 12px);">
+                <div class="eyelid-overlay"></div>
+                <div class="iris" style="transform: translate(-6px, 6px);">
+                  <div class="pupil"></div>
+                </div>
+              </div>
+              <!-- Left Eye (Normal) -->
+              <div class="eye" id="eye-left-cn3">
+                <div class="eyelid-overlay"></div>
+                <div class="iris">
+                  <div class="pupil"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Patient B: Face (CN VII) -->
+            <div class="face-canvas" id="container-face-cn7" style="display: none;">
+              <svg class="face-svg" viewBox="0 0 200 200">
+                <!-- Outer Face Contour -->
+                <path class="face-bg face-part" d="M100 10 C155 10 180 45 180 100 C180 155 145 190 100 190 C55 190 20 155 20 100 C20 45 45 10 100 10 Z" />
+                <!-- Eyes (Closed/Open representation using path) -->
+                <!-- Left Eye: Normal (now on right side of screen) -->
+                <path class="face-part" id="eye-l-cn7" d="M120 85 Q130 75 140 85 Q130 95 120 85 Z" fill="none" />
+                <circle id="pupil-l-cn7" cx="130" cy="85" r="5" fill="#f8f7ff" />
+                
+                <!-- Right Eye: Affected (Inability to close/widely staring, now on left side of screen) -->
+                <path class="face-part" id="eye-r-cn7" d="M60 85 Q70 75 80 85 Q70 95 60 85 Z" fill="none" />
+                <circle id="pupil-r-cn7" cx="70" cy="85" r="5" fill="#f8f7ff" />
+                
+                <!-- Eyebrows -->
+                <!-- Left Eyebrow (Normal, now on right side of screen) -->
+                <path class="face-part" id="eyebrow-l-cn7" d="M115 70 Q130 70 145 70" />
+                <!-- Right Eyebrow (Affected - weak, now on left side of screen) -->
+                <path class="face-part" id="eyebrow-r-cn7" d="M55 70 Q70 65 85 72" />
+
+                <!-- Nose -->
+                <path class="face-part" d="M100 95 L95 120 L105 120" />
+
+                <!-- Mouth -->
+                <path class="face-part" id="mouth-cn7" d="M70 150 Q100 150 130 150" />
+              </svg>
+            </div>
+
+            <!-- Patient C: Sensory Map (CN V) -->
+            <div class="sensory-face" id="container-sensory-cn5" style="display: none;">
+              <!-- Simple SVG underlay for facial boundaries -->
+              <svg viewBox="0 0 180 220" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.25;">
+                <path d="M90 15 C135 15 155 45 155 110 C155 160 130 205 90 205 C50 205 25 160 25 110 C25 45 45 15 90 15 Z" fill="none" stroke="var(--purple-neon)" stroke-width="2" />
+                <path d="M90 15 L90 205" fill="none" stroke="rgba(255,255,255,0.1)" stroke-dasharray="4" />
+              </svg>
+              <!-- Six Sensory Target Nodes -->
+              <!-- Right Face Nodes (Affected - Numb, on viewer's left) -->
+              <div class="sensory-node" id="node-r-v1" style="top: 45px; left: 50px;" data-side="right" data-branch="v1">•</div>
+              <div class="sensory-node" id="node-r-v2" style="top: 105px; left: 40px;" data-side="right" data-branch="v2">•</div>
+              <div class="sensory-node" id="node-r-v3" style="top: 160px; left: 55px;" data-side="right" data-branch="v3">•</div>
+              
+              <!-- Left Face Nodes (Normal, on viewer's right) -->
+              <div class="sensory-node" id="node-l-v1" style="top: 45px; left: 110px;" data-side="left" data-branch="v1">•</div>
+              <div class="sensory-node" id="node-l-v2" style="top: 105px; left: 120px;" data-side="left" data-branch="v2">•</div>
+              <div class="sensory-node" id="node-l-v3" style="top: 160px; left: 105px;" data-side="left" data-branch="v3">•</div>
+            </div>
+
+            <!-- Patient D: Tracking (CN VI) -->
+            <div class="tracking-area" id="container-tracking-cn6" style="display: none;">
+              <!-- Neon Tracking Dot -->
+              <div class="tracking-dot" id="tracking-target"></div>
+              
+              <div class="eyes-container">
+                <!-- Right Eye (Affected - Medial Strabismus & Abducens Palsy) -->
+                <div class="eye" id="eye-right-cn6">
+                  <div class="iris">
+                    <div class="pupil"></div>
+                  </div>
+                </div>
+                <!-- Left Eye (Normal) -->
+                <div class="eye" id="eye-left-cn6">
+                  <div class="iris">
+                    <div class="pupil"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 2 Patient A: Decision Panel (Frontal) -->
+            <div class="decision-panel-container" id="container-decision-r2a" style="display: none;">
+              <div class="decision-scenarios">
+                <button class="action-btn-small scenario-btn" data-scenario="funeral">Social Scenario (Funeral)</button>
+                <button class="action-btn-small scenario-btn" data-scenario="planning">Planning Scenario (Project)</button>
+                <button class="action-btn-small scenario-btn" data-scenario="risk">Risk Scenario (Finance)</button>
+              </div>
+            </div>
+
+            <!-- Room 2 Patient B: Speech Monitor (Temporal/Wernicke) -->
+            <div class="speech-monitor-container" id="container-speech-r2b" style="display: none;">
+              <div class="audio-waves">
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+              </div>
+              <button class="action-btn-small" id="btn-trigger-speech">Conversational Query</button>
+            </div>
+
+            <!-- Room 2 Patient C: Visual Field Grid (Occipital) -->
+            <div class="visual-field-container" id="container-visual-r2c" style="display: none;">
+              <div class="visual-field-grid">
+                <div class="vf-point left-field" data-point="l1"></div>
+                <div class="vf-point center-field" data-point="c1"></div>
+                <div class="vf-point right-field" data-point="r1"></div>
+                <div class="vf-point left-field" data-point="l2"></div>
+                <div class="vf-point center-field" data-point="c2"></div>
+                <div class="vf-point right-field" data-point="r2"></div>
+                <div class="vf-point left-field" data-point="l3"></div>
+                <div class="vf-point center-field" data-point="c3"></div>
+                <div class="vf-point right-field" data-point="r3"></div>
+              </div>
+            </div>
+
+            <!-- Room 2 Patient D: Neglect Plate Test (Parietal) -->
+            <div class="neglect-plate-container" id="container-neglect-r2d" style="display: none;">
+              <div class="neglect-plate">
+                <div class="food-item" id="food-l1" data-side="left">🍒</div>
+                <div class="food-item" id="food-l2" data-side="left">🍞</div>
+                <div class="food-item" id="food-l3" data-side="left">🥗</div>
+                <div class="food-item" id="food-r1" data-side="right">🥩</div>
+                <div class="food-item" id="food-r2" data-side="right">🍪</div>
+                <div class="food-item" id="food-r3" data-side="right">🍟</div>
+              </div>
+            </div>
+
+            <!-- Room 3 Patient A: Thalamus Sensory Pain Map -->
+            <div class="pain-map-container" id="container-pain-r3a" style="display: none;">
+              <div class="pain-body-canvas">
+                <div class="body-side" id="body-side-right" data-side="right">RIGHT BODY</div>
+                <div class="body-side" id="body-side-left" data-side="left">LEFT BODY</div>
+              </div>
+            </div>
+
+            <!-- Room 3 Patient B: Subthalamus Hemiballismus Swing -->
+            <div class="ballismus-container" id="container-ballismus-r3b" style="display: none;">
+              <div class="ballismus-stage">
+                <div class="ballismus-pivot"></div>
+                <div class="ballismus-limb" id="ballismus-limb"></div>
+              </div>
+            </div>
+
+            <!-- Room 3 Patient C: Hypothalamus Nystagmus Monitor -->
+            <div class="nystagmus-container" id="container-nystagmus-r3c" style="display: none;">
+              <!-- Neon Tracking Dot -->
+              <div class="tracking-dot" id="nystagmus-target" style="display: none;"></div>
+              
+              <div class="nystagmus-eyes">
+                <div class="eye" id="nystagmus-eye-right">
+                  <div class="iris">
+                    <div class="pupil"></div>
+                  </div>
+                </div>
+                <div class="eye" id="nystagmus-eye-left">
+                  <div class="iris">
+                    <div class="pupil"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 3 Patient D: Epithalamus Melatonin Graph -->
+            <div class="circadian-container" id="container-circadian-r3d" style="display: none;">
+              <div class="circadian-chart">
+                <svg viewBox="0 0 300 120">
+                  <path d="M 0 100 L 300 100" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                  <path d="M 0 20 L 300 20" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                  <path d="M 0 100 Q 75 100 150 20 Q 225 100 300 100" fill="none" stroke="var(--blue-neon)" stroke-width="2" stroke-dasharray="4" />
+                  <path d="M 0 95 L 300 95" fill="none" stroke="var(--pink-neon)" stroke-width="3" />
+                </svg>
+                <div class="circadian-labels">
+                  <span class="melatonin-normal">Melatonin (Normal)</span>
+                  <span class="melatonin-tomas">Melatonin (Tomas)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 4 Patient A: Hypotonia Pendular Knee Jerk -->
+            <div class="pendular-container" id="container-reflex-r4a" style="display: none;">
+              <div class="pendular-stage">
+                <svg class="knee-svg" viewBox="0 0 200 180" style="width: 100%; height: 100%;">
+                  <!-- Upper leg / Thigh (static) -->
+                  <path d="M 20 55 C 50 55, 70 60, 85 65 C 92 68, 95 72, 95 80 C 95 85, 88 90, 80 92 C 60 95, 40 95, 20 95" fill="#1c1136" stroke="var(--purple-neon)" stroke-width="3" stroke-linecap="round" />
+                  <!-- Patellar Tendon Target Indicator -->
+                  <g class="tendon-target" id="tendon-hit-zone" style="cursor: pointer;">
+                    <circle cx="95" cy="85" r="8" fill="rgba(255, 0, 127, 0.2)" stroke="var(--pink-neon)" stroke-width="1.5" />
+                    <circle cx="95" cy="85" r="3" fill="var(--pink-neon)" />
+                  </g>
+                  <!-- Lower Leg / Shin (pivoted) -->
+                  <g id="pendular-shin" style="transform-origin: 85px 80px; transition: transform 0.1s ease-out;">
+                    <path d="M 77 80 C 77 100, 77 125, 77 145 C 77 152, 80 156, 85 156 C 90 156, 105 156, 110 156 C 114 156, 114 148, 108 148 C 100 148, 90 148, 88 140 C 88 120, 87 95, 87 80 Z" fill="#1c1136" stroke="var(--purple-neon)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </g>
+                </svg>
+              </div>
+              <button class="action-btn-small" id="btn-tap-knee">Tap Patellar Tendon</button>
+            </div>
+
+            <!-- Room 4 Patient B: Dysdiadochokinesia Hands -->
+            <div class="dysdiad-container" id="container-dysdiad-r4b" style="display: none;">
+              <div class="dysdiad-hands">
+                <div class="hand-test" id="hand-test-right">
+                  <div class="hand-palm" id="hand-palm-right">✋</div>
+                  <span class="hand-text-affected">Right (Affected)</span>
+                </div>
+                <div class="hand-test" id="hand-test-left">
+                  <div class="hand-palm" id="hand-palm-left">✋</div>
+                  <span class="hand-text-normal">Left (Normal)</span>
+                </div>
+              </div>
+              <button class="action-btn-small" id="btn-run-dysdiad">Test Alternate Actions</button>
+            </div>
+
+            <!-- Room 4 Patient C: Ataxia Footprints -->
+            <div class="ataxia-container" id="container-ataxia-r4c" style="display: none;">
+              <div class="ataxia-grid" id="ataxia-footprints"></div>
+              <button class="action-btn-small" id="btn-ataxia-walk">Test Tandem Walk</button>
+            </div>
+
+            <!-- Room 4 Patient D: Intention Tremor Target -->
+            <div class="tremor-container" id="container-tremor-r4d" style="display: none;">
+              <div class="tremor-target-dot" id="tremor-target-target">NOSE</div>
+              <div class="tremor-finger" id="tremor-finger">👉</div>
+            </div>
+
+            <!-- Room 5 Patient A: Parkinson Tremor -->
+            <div class="parkinson-container" id="container-parkinson-r5a" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%;">
+              <div class="parkinson-stage" style="width: 220px; height: 160px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid var(--border-glass); overflow: hidden; position: relative;">
+                <svg class="hand-svg" id="parkinson-hand-svg" viewBox="0 0 100 100" style="width: 80px; height: 80px; filter: drop-shadow(0 0 5px var(--pink-glow)); transition: transform 0.05s linear; cursor: pointer;">
+                  <path id="parkinson-hand-path" d="M 40 80 L 40 95 C 40 97, 60 97, 60 95 L 60 80 C 68 80, 75 72, 75 60 C 75 52, 70 48, 68 40 C 67 36, 68 25, 68 20 C 68 17, 63 17, 63 20 L 63 40 C 63 42, 60 42, 60 40 L 60 15 C 60 12, 55 12, 55 15 L 55 40 C 55 42, 52 42, 52 40 L 52 10 C 52 7, 47 7, 47 10 L 47 40 C 47 42, 44 42, 44 40 L 44 15 C 44 12, 39 12, 39 15 L 39 40 C 39 42, 36 42, 36 40 L 36 30 C 36 27, 31 27, 31 30 L 31 52 C 28 54, 25 58, 25 62 L 15 52 C 12 49, 9 52, 12 55 L 26 70 C 30 78, 36 80, 40 80 Z" fill="#1c1136" stroke="var(--pink-neon)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+                </svg>
+              </div>
+              <button class="action-btn-small" id="btn-parkinson-grip">Perform Grip Test</button>
+            </div>
+
+            <!-- Room 5 Patient B: Serotonin Cleft Analyzer -->
+            <div class="synapse-container" id="container-synapse-r5b" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%;">
+              <div class="synapse-graphic-box" style="width: 240px; height: 160px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1.5px solid var(--border-glass); overflow: hidden; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.6);">
+                <svg viewBox="0 0 200 120" style="width: 100%; height: 100%;">
+                  <path d="M -10 30 C 50 30, 80 15, 100 15 C 120 15, 150 30, 210 30" fill="none" stroke="var(--purple-neon)" stroke-width="3.5" />
+                  <circle cx="50" cy="10" r="10" fill="none" stroke="var(--purple-neon)" stroke-width="1.5" stroke-dasharray="2 2" />
+                  <circle cx="150" cy="10" r="10" fill="none" stroke="var(--purple-neon)" stroke-width="1.5" stroke-dasharray="2 2" />
+                  <path d="M -10 90 C 50 90, 70 105, 100 105 C 130 105, 150 90, 210 90" fill="none" stroke="var(--blue-neon)" stroke-width="3.5" />
+                  <path d="M 40 90 L 40 85 L 46 85 L 46 90" fill="none" stroke="var(--blue-neon)" stroke-width="2" />
+                  <path d="M 100 105 L 100 100 L 106 100 L 106 105" fill="none" stroke="var(--blue-neon)" stroke-width="2" />
+                  <path d="M 160 90 L 160 85 L 166 85 L 166 90" fill="none" stroke="var(--blue-neon)" stroke-width="2" />
+                  <g id="synapse-neurotransmitters"></g>
+                </svg>
+                <div class="synapse-scanner-laser" id="synapse-laser"></div>
+              </div>
+              <button class="action-btn-small" id="btn-synapse-count">Scan Synaptic Density</button>
+            </div>
+
+            <!-- Room 5 Patient C: EEG absence epilepsy -->
+            <div class="eeg-container" id="container-eeg-r5c" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%;">
+              <div class="eeg-screen-box" style="width: 240px; height: 160px; background: rgba(0,25,10,0.85); border-radius: 12px; border: 2px solid #005a20; overflow: hidden; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.9);">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0,240,10,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,10,0.06) 1px, transparent 1px); background-size: 15px 15px;"></div>
+                <svg viewBox="0 0 300 120" style="width: 100%; height: 100%; position: relative; z-index: 5;">
+                  <path id="eeg-line-path" d="M 0 60 Q 25 60 50 60 Q 75 60 100 60 Q 125 60 150 60 Q 175 60 200 60" fill="none" stroke="#39ff14" stroke-width="2.5" style="filter: drop-shadow(0 0 4px rgba(57, 255, 20, 0.7));" />
+                </svg>
+              </div>
+              <button class="action-btn-small" id="btn-trigger-eeg">Record EEG</button>
+            </div>
+
+            <!-- Room 5 Patient D: Memory Recall Test -->
+            <div class="memory-container" id="container-memory-r5d" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%;">
+              <div class="memory-board-box" style="width: 240px; height: 160px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 15px;">
+                <span style="font-family: var(--font-display); font-size: 10px; color: var(--text-secondary); letter-spacing: 1px;">ANTEROGRADE MEMORY REGISTER</span>
+                <div class="memory-board" style="display: flex; gap: 10px;">
+                  <div class="memory-word" id="word-1" style="padding: 8px 12px; background: rgba(0,240,255,0.05); border: 1.5px solid rgba(0,240,255,0.15); border-radius: 6px; font-family: var(--font-display); font-size: 13px; color: var(--blue-neon); opacity: 0; transition: opacity 0.3s ease; box-shadow: 0 0 8px rgba(0,240,255,0.05);">Apple</div>
+                  <div class="memory-word" id="word-2" style="padding: 8px 12px; background: rgba(0,240,255,0.05); border: 1.5px solid rgba(0,240,255,0.15); border-radius: 6px; font-family: var(--font-display); font-size: 13px; color: var(--blue-neon); opacity: 0; transition: opacity 0.3s ease; box-shadow: 0 0 8px rgba(0,240,255,0.05);">Table</div>
+                  <div class="memory-word" id="word-3" style="padding: 8px 12px; background: rgba(0,240,255,0.05); border: 1.5px solid rgba(0,240,255,0.15); border-radius: 6px; font-family: var(--font-display); font-size: 13px; color: var(--blue-neon); opacity: 0; transition: opacity 0.3s ease; box-shadow: 0 0 8px rgba(0,240,255,0.05);">Penny</div>
+                </div>
+                <div id="memory-timer-bar" style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; display: none;">
+                  <div id="memory-timer-progress" style="width: 0%; height: 100%; background: var(--pink-neon); transition: width 4s linear;"></div>
+                </div>
+              </div>
+              <div class="memory-actions" style="display: flex; gap: 10px;">
+                <button class="action-btn-small" id="btn-memory-register">Register Words</button>
+                <button class="action-btn-small" id="btn-memory-recall">Test Recall</button>
+              </div>
+            </div>
+
+            <!-- Room 6 Patient A: MCA stroke mannequin -->
+            <div class="angio-motor-container" id="container-mca-r6a" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%;">
+              <div class="mannequin-stage" style="width: 200px; height: 180px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 100 120" style="width: 100%; height: 100%;">
+                  <circle cx="50" cy="20" r="12" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path d="M 38 34 L 62 34 L 58 80 L 42 80 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path id="mca-right-arm" d="M 38 34 L 25 60 C 24 62, 28 64, 30 62 L 40 45 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path d="M 62 34 L 75 60 C 76 62, 72 64, 70 62 L 60 45 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path id="mca-right-face" d="M 50 12 C 45 12, 41 14, 41 20 C 41 26, 45 28, 50 28 Z" fill="none" stroke="none" />
+                  <path id="mca-right-leg" d="M 42 80 L 38 115 C 38 118, 42 118, 44 115 L 49 80 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path d="M 58 80 L 62 115 C 62 118, 58 118, 56 115 L 51 80 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                </svg>
+              </div>
+              <button class="action-btn-small" id="btn-mca-strength">Assess Motor Strength</button>
+            </div>
+
+            <!-- Room 6 Patient B: ACA stroke mannequin -->
+            <div class="angio-motor-container" id="container-aca-r6b" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%;">
+              <div class="mannequin-stage" style="width: 200px; height: 180px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 100 120" style="width: 100%; height: 100%;">
+                  <circle cx="50" cy="20" r="12" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path d="M 38 34 L 62 34 L 58 80 L 42 80 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path id="aca-right-arm" d="M 38 34 L 25 60 C 24 62, 28 64, 30 62 L 40 45 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path d="M 62 34 L 75 60 C 76 62, 72 64, 70 62 L 60 45 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path id="aca-right-face" d="M 50 12 C 45 12, 41 14, 41 20 C 41 26, 45 28, 50 28 Z" fill="none" stroke="none" />
+                  <path id="aca-right-leg" d="M 42 80 L 38 115 C 38 118, 42 118, 44 115 L 49 80 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                  <path d="M 58 80 L 62 115 C 62 118, 58 118, 56 115 L 51 80 Z" fill="#1c1136" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                </svg>
+              </div>
+              <button class="action-btn-small" id="btn-aca-strength">Assess Motor Strength</button>
+            </div>
+
+            <!-- Room 6 Patient C: PCA stroke visual grid -->
+            <div class="visual-field-container" id="container-visual-r6c" style="display: none; width: 100%; justify-content: center; align-items: center;">
+              <div class="visual-field-grid" style="position: relative; width: 180px; height: 180px;">
+                <div class="radar-scanline"></div>
+                <div class="visual-field-grid-points" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 50%; border: 1.5px dashed var(--blue-neon); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); position: relative; z-index: 5; box-sizing: border-box;">
+                  <div class="vf-point-r6 left-field" data-point="l1"></div>
+                  <div class="vf-point-r6 center-field" data-point="c1"></div>
+                  <div class="vf-point-r6 right-field" data-point="r1"></div>
+                  <div class="vf-point-r6 left-field" data-point="l2"></div>
+                  <div class="vf-point-r6 center-field" data-point="c2"></div>
+                  <div class="vf-point-r6 right-field" data-point="r2"></div>
+                  <div class="vf-point-r6 left-field" data-point="l3"></div>
+                  <div class="vf-point-r6 center-field" data-point="c3"></div>
+                  <div class="vf-point-r6 right-field" data-point="r3"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room 6 Patient D: Basilar locked-in gaze tracker -->
+            <div class="locked-in-container" id="container-basilar-r6d" style="display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; gap: 15px;">
+              <!-- Neon Tracking Dot -->
+              <div class="tracking-dot" id="basilar-target" style="display: none;"></div>
+              
+              <div class="locked-in-eyes" style="display: flex; gap: 20px; margin: auto;">
+                <div class="eye" id="locked-eye-left" style="position: relative; width: 70px; height: 40px; border-radius: 50%; background: #f8f7ff; border: 2px solid var(--purple-neon); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px var(--purple-glow);">
+                  <div class="iris" style="width: 25px; height: 25px; border-radius: 50%; background: #0e85a3; display: flex; align-items: center; justify-content: center; transition: transform 0.05s linear;">
+                    <div class="pupil" style="width: 10px; height: 10px; border-radius: 50%; background: black;"></div>
+                  </div>
+                </div>
+                <div class="eye" id="locked-eye-right" style="position: relative; width: 70px; height: 40px; border-radius: 50%; background: #f8f7ff; border: 2px solid var(--purple-neon); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px var(--purple-glow);">
+                  <div class="iris" style="width: 25px; height: 25px; border-radius: 50%; background: #0e85a3; display: flex; align-items: center; justify-content: center; transition: transform 0.05s linear;">
+                    <div class="pupil" style="width: 10px; height: 10px; border-radius: 50%; background: black;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- Closes diagnostic-sandbox -->
+        </div> <!-- Closes modal-grid -->
+
+        <!-- Speech/Dialogue Bubble at the bottom -->
+        <div class="dialogue-box" id="sandbox-dialogue">
+          "Please select a tool and click/move within this area to examine me."
+        </div>
+      </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=3"></script>
+</body>
+</html>

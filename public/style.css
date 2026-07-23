@@ -1,0 +1,1916 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-dark: #0a0616;
+  --bg-panel: rgba(20, 12, 38, 0.6);
+  --purple-neon: #a020f0;
+  --purple-glow: rgba(160, 32, 240, 0.4);
+  --pink-neon: #ff007f;
+  --pink-glow: rgba(255, 0, 127, 0.4);
+  --blue-neon: #00f0ff;
+  --blue-glow: rgba(0, 240, 255, 0.4);
+  --green-neon: #39ff14;
+  --green-glow: rgba(57, 255, 20, 0.4);
+  
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --text-primary: #f8f7ff;
+  --text-secondary: #a39bb8;
+  --font-display: 'Orbitron', sans-serif;
+  --font-main: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(160, 32, 240, 0.15) 0px, transparent 50%),
+    radial-gradient(at 90% 80%, rgba(0, 240, 255, 0.1) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(255, 0, 127, 0.05) 0px, transparent 60%);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--purple-neon);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pink-neon);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Glowing text utilities */
+.glow-text-purple {
+  text-shadow: 0 0 10px var(--purple-glow), 0 0 20px var(--purple-glow);
+}
+.glow-text-pink {
+  text-shadow: 0 0 10px var(--pink-glow), 0 0 20px var(--pink-glow);
+}
+.glow-text-blue {
+  text-shadow: 0 0 10px var(--blue-glow), 0 0 20px var(--blue-glow);
+}
+
+/* Application Layout */
+#app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  gap: 24px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--purple-neon), var(--pink-neon), var(--blue-neon));
+}
+
+.brand h1 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 2px;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--blue-neon), #d946ef, var(--pink-neon));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand span {
+  font-size: 11px;
+  font-family: var(--font-display);
+  color: var(--text-secondary);
+  letter-spacing: 4px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.team-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.team-badge span:first-child {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.team-badge span:last-child {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--blue-neon);
+}
+
+.timer-display {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--pink-neon);
+  text-shadow: 0 0 12px var(--pink-glow);
+  background: rgba(255, 0, 127, 0.05);
+  border: 1px solid rgba(255, 0, 127, 0.2);
+  padding: 6px 0;
+  border-radius: 8px;
+  width: 170px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Screen States */
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* CROSSWORD SCREEN */
+#crossword-screen {
+  flex: 1;
+  min-height: calc(100vh - 48px);
+  gap: 12px;
+}
+
+.crossword-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.crossword-topbar-title {
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+#crossword-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+/* COMBINED SUMMARY SCREEN */
+#combined-summary-screen {
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+}
+
+.combined-score-hero {
+  margin-top: 20px;
+  padding: 18px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid rgba(160, 32, 240, 0.35);
+  border-radius: 10px;
+  background: rgba(160, 32, 240, 0.08);
+}
+
+.combined-score-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.combined-score-value {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--purple-neon, #a020f0);
+  text-shadow: 0 0 15px rgba(160, 32, 240, 0.6);
+}
+
+.combined-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.combined-section {
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.combined-section-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.combined-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--border-glass);
+}
+
+.combined-row:last-child {
+  border-bottom: none;
+}
+
+.combined-row span:last-child {
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* INTRO SCREEN */
+#intro-screen {
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+}
+
+.intro-card {
+  max-width: 550px;
+  width: 100%;
+  padding: 48px;
+  text-align: center;
+  border: 1px solid rgba(160, 32, 240, 0.2);
+}
+
+.intro-logo {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 24px;
+  background: radial-gradient(circle, rgba(160, 32, 240, 0.2) 0%, transparent 70%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro-logo svg {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 0 8px var(--purple-neon));
+  animation: pulse-logo 3s ease-in-out infinite;
+}
+
+@keyframes pulse-logo {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px var(--purple-neon)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 15px var(--pink-neon)); }
+}
+
+.intro-card h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.intro-card p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.input-group {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--blue-neon);
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+}
+
+.input-group input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 16px;
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--blue-neon);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+}
+
+.btn-neon {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(90deg, var(--purple-neon), var(--pink-neon));
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 15px rgba(255, 0, 127, 0.2);
+}
+
+.btn-neon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 0, 127, 0.4), 0 0 10px var(--purple-neon);
+}
+
+.btn-neon:active {
+  transform: translateY(1px);
+}
+
+/* MAIN ESCAPE ROOM SCREEN */
+#main-screen {
+  flex-direction: row;
+  gap: 24px;
+}
+
+/* Responsive sidebars */
+@media (max-width: 992px) {
+  #main-screen {
+    flex-direction: column;
+  }
+}
+
+.ward-view {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.section-title .pulse-dot {
+  width: 10px;
+  height: 10px;
+  background-color: var(--blue-neon);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--blue-neon);
+  animation: pulse-green 1.5s infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.patient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Patient Card Styling */
+.patient-card {
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.patient-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--purple-neon);
+  transition: all 0.3s ease;
+}
+
+.patient-card:hover {
+  border-color: rgba(160, 32, 240, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(160, 32, 240, 0.05);
+  transform: translateY(-2px);
+}
+
+.patient-card:hover::after {
+  height: 100%;
+  background: var(--pink-neon);
+}
+
+.patient-card.examined::after {
+  background: var(--blue-neon);
+}
+
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patient-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-id {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--blue-neon);
+}
+
+.patient-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.status-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: var(--font-display);
+  font-weight: bold;
+}
+
+.status-badge.unexamined {
+  background: rgba(255, 0, 127, 0.15);
+  color: var(--pink-neon);
+  border: 1px solid rgba(255, 0, 127, 0.3);
+}
+
+.status-badge.examined {
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--blue-neon);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+/* Cardiac EKG Monitor inside cards */
+.ekg-container {
+  height: 50px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.ekg-line {
+  stroke: var(--pink-neon);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw-ekg 4s linear infinite;
+  filter: drop-shadow(0 0 3px var(--pink-neon));
+}
+
+.patient-card.examined .ekg-line {
+  stroke: var(--blue-neon);
+  filter: drop-shadow(0 0 3px var(--blue-neon));
+}
+
+@keyframes draw-ekg {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.patient-summary {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.patient-card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.examine-btn-small {
+  background: transparent;
+  border: 1px solid rgba(160, 32, 240, 0.5);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.patient-card:hover .examine-btn-small {
+  background: var(--purple-neon);
+  border-color: var(--purple-neon);
+  box-shadow: 0 0 10px var(--purple-glow);
+}
+
+/* CONTROL TERMINAL PANEL */
+.control-terminal {
+  flex: 1.1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.terminal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.terminal-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--pink-neon);
+}
+
+.door-status-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pink-neon);
+  box-shadow: 0 0 8px var(--pink-neon);
+}
+
+.status-indicator.unlocked {
+  background: var(--green-neon);
+  box-shadow: 0 0 8px var(--green-neon);
+}
+
+.terminal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+}
+
+.lock-art {
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.lock-art svg {
+  width: 90px;
+  height: 90px;
+  fill: var(--pink-neon);
+  filter: drop-shadow(0 0 8px var(--pink-glow));
+  transition: all 0.5s ease;
+}
+
+.lock-art.unlocked svg {
+  fill: var(--green-neon);
+  filter: drop-shadow(0 0 10px var(--green-glow));
+  transform: scale(1.05);
+}
+
+.terminal-instructions {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  text-align: center;
+  background: rgba(0,0,0,0.2);
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* KEYPAD SYSTEM */
+.keypad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.keypad-display {
+  width: 100%;
+  background: #000;
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 16px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  text-align: center;
+  letter-spacing: 6px;
+  color: var(--blue-neon);
+  text-shadow: 0 0 8px var(--blue-glow);
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.keypad-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  padding: 18px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.keypad-btn:hover {
+  background: rgba(160, 32, 240, 0.15);
+  border-color: var(--purple-neon);
+  box-shadow: 0 0 10px var(--purple-glow);
+}
+
+.keypad-btn:active {
+  background: var(--purple-neon);
+  transform: scale(0.95);
+}
+
+.keypad-btn.action-btn {
+  font-size: 14px;
+}
+
+.keypad-btn.btn-clear {
+  color: var(--pink-neon);
+}
+
+.keypad-btn.btn-submit {
+  color: var(--green-neon);
+}
+
+.keypad-container.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+
+/* INTERACTIVE EXAMINATION MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 3, 11, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  display: flex;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(160, 32, 240, 0.3);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.6), 0 0 30px rgba(160, 32, 240, 0.1);
+}
+
+.modal-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--blue-neon);
+}
+
+.close-modal-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 28px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: var(--pink-neon);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modal-vignette {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vignette-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--pink-neon);
+  text-transform: uppercase;
+}
+
+.vignette-history {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: rgba(0,0,0,0.2);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+.vignette-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 6px;
+}
+
+.spec-row span:first-child {
+  color: var(--text-secondary);
+}
+
+.spec-row span:last-child {
+  font-weight: 500;
+}
+
+/* Diagnostic Sandbox */
+.diagnostic-sandbox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 320px;
+  position: relative;
+}
+
+.sandbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sandbox-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--blue-neon);
+}
+
+.sandbox-tools {
+  display: flex;
+  gap: 8px;
+}
+
+.tool-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-display);
+}
+
+.tool-btn.active {
+  background: var(--blue-neon);
+  border-color: var(--blue-neon);
+  color: var(--bg-dark);
+  box-shadow: 0 0 10px var(--blue-glow);
+}
+
+/* Diagnostic Playground Area */
+.sandbox-playground {
+  flex-grow: 1;
+  border-radius: 8px;
+  background: radial-gradient(circle, rgba(16, 9, 36, 0.5) 0%, rgba(5, 3, 10, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+}
+
+.sandbox-instruction {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--pink-neon);
+  background: rgba(0,0,0,0.6);
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 0, 127, 0.2);
+  text-align: center;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.dialogue-box {
+  position: relative;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  color: #fff;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Patient A (CN III) - Interactive Eyes */
+.eyes-container {
+  display: flex;
+  gap: 40px;
+  position: relative;
+  margin: auto;
+}
+
+.eye {
+  width: 80px;
+  height: 80px;
+  background: #fff;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.4), 0 0 10px rgba(255,255,255,0.2);
+}
+
+.eyelid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: #251642;
+  border-radius: 50% 50% 0 0;
+  z-index: 10;
+  transition: height 0.5s ease;
+}
+
+.eye.ptosis .eyelid-overlay {
+  height: 55%;
+  border-bottom: 2px solid #ff007f;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.iris {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0e85a3 30%, #064052 70%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.pupil {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #000;
+  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.eye.affected .pupil {
+  width: 32px;
+  height: 32px;
+}
+
+/* Patient A: Flashlight Beam Effect */
+.flashlight-beam {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(0, 240, 255, 0.1) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 20;
+  display: none;
+  border: 1px dashed rgba(0, 240, 255, 0.4);
+}
+
+/* Patient B (CN VII) - Facial asymmetry */
+.face-canvas {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  margin: auto;
+}
+
+.face-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.face-part {
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.face-bg {
+  fill: #1c1136;
+  stroke: var(--purple-neon);
+}
+
+/* Interactive Patient B Buttons */
+.face-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* Patient C (CN V) - Interactive Sensory Face Map */
+.sensory-face {
+  width: 180px;
+  height: 220px;
+  position: relative;
+  margin: auto;
+}
+
+.sensory-node {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 240, 255, 0.15);
+  border: 1.5px solid var(--blue-neon);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--blue-neon);
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+.sensory-node:hover {
+  background: rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 10px var(--blue-neon);
+  transform: scale(1.1);
+}
+
+.sensory-node.checked {
+  background: rgba(57, 255, 20, 0.2);
+  border-color: var(--green-neon);
+  color: var(--green-neon);
+}
+
+.sensory-node.numb {
+  background: rgba(255, 0, 127, 0.2);
+  border-color: var(--pink-neon);
+  color: var(--pink-neon);
+}
+
+.sensory-node.active-touch {
+  animation: pulse-ring 0.8s ease-out;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 0, 127, 0.7); }
+  70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(255, 0, 127, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 127, 0); }
+}
+
+/* Patient D (CN VI) - Interactive Eye Tracking */
+.tracking-area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: none; /* Hide default cursor to show neon target */
+  margin: auto;
+  min-height: 140px;
+}
+
+.tracking-dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--pink-neon);
+  box-shadow: 0 0 12px var(--pink-neon);
+  pointer-events: none;
+  z-index: 25;
+}
+
+/* Diagnosed Badge on UI card */
+.diagnosed-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(57, 255, 20, 0.1);
+  border: 1px solid rgba(57, 255, 20, 0.3);
+  color: var(--green-neon);
+  font-family: var(--font-display);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.diagnosed-badge svg {
+  fill: var(--green-neon);
+  width: 12px;
+  height: 12px;
+}
+
+/* ESCAPE SCREEN (RESULTS) */
+#escape-screen, #transition-screen, #loss-screen {
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+}
+
+.escape-card {
+  max-width: 650px;
+  width: 100%;
+  padding: 48px;
+  text-align: center;
+  border: 1.5px solid var(--green-neon);
+  box-shadow: 0 0 35px rgba(57, 255, 20, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.escape-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--green-neon), var(--blue-neon));
+}
+
+.congrats-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--green-neon);
+  text-shadow: 0 0 15px var(--green-glow);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.escape-time-box {
+  margin: 32px 0;
+  padding: 24px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 12px;
+  border: 1px solid var(--border-glass);
+}
+
+.escape-time-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+}
+
+.escape-time-val {
+  font-family: var(--font-display);
+  font-size: 48px;
+  color: var(--blue-neon);
+  text-shadow: 0 0 15px var(--blue-glow);
+  font-weight: 700;
+}
+
+.team-summary-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  margin-bottom: 32px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 16px;
+}
+
+.btn-outline {
+  flex: 1;
+  background: transparent;
+  border: 1.5px solid var(--blue-neon);
+  color: var(--blue-neon);
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: 0 0 15px var(--blue-glow);
+}
+
+.btn-primary-neon {
+  flex: 1.2;
+}
+
+/* Floating Confetti Effects */
+.particle {
+  position: absolute;
+  pointer-events: none;
+  background-color: var(--pink-neon);
+  border-radius: 50%;
+  animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+/* Multi-room extensions */
+
+/* Reusable Futurist Neon Button */
+.action-btn-small {
+  background: rgba(160, 32, 240, 0.1);
+  border: 1.5px solid var(--purple-neon);
+  color: var(--text-primary);
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(160, 32, 240, 0.15);
+  text-transform: uppercase;
+}
+
+.action-btn-small:hover {
+  background: var(--purple-neon);
+  color: #fff;
+  box-shadow: 0 0 14px var(--purple-glow), 0 0 4px var(--purple-neon);
+  transform: translateY(-1.5px);
+}
+
+.action-btn-small:active {
+  transform: translateY(0.5px);
+}
+
+/* Room 2 Patient A (Frontal - Decision Panel) */
+.decision-panel-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.decision-scenarios {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 240px;
+}
+.decision-scenarios .scenario-btn {
+  width: 100%;
+  text-align: center;
+}
+
+/* Room 2 Patient B (Temporal - Speech Monitor) */
+.speech-monitor-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin: auto;
+}
+.audio-waves {
+  display: flex;
+  gap: 6px;
+  height: 48px;
+  align-items: center;
+}
+.audio-waves .wave-bar {
+  width: 4px;
+  height: 12px;
+  background: var(--blue-neon);
+  border-radius: 2px;
+  transition: height 0.1s ease;
+}
+.audio-waves .wave-bar:nth-child(even) {
+  background: var(--pink-neon);
+}
+.audio-waves .wave-bar:nth-child(3) {
+  background: var(--purple-neon);
+}
+.wave-bar.animated {
+  animation: wave 1.2s ease-in-out infinite alternate;
+}
+.wave-bar:nth-child(2) { animation-delay: 0.2s; }
+.wave-bar:nth-child(3) { animation-delay: 0.4s; }
+.wave-bar:nth-child(4) { animation-delay: 0.1s; }
+.wave-bar:nth-child(5) { animation-delay: 0.3s; }
+
+@keyframes wave {
+  0% { height: 10px; }
+  100% { height: 44px; }
+}
+
+/* Room 2 Patient C (Occipital - Visual Field Grid) */
+.visual-field-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+}
+.visual-field-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 180px;
+  height: 180px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--purple-neon);
+  box-shadow: 0 0 15px rgba(160, 32, 240, 0.2);
+}
+.vf-point {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border-glass);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.vf-point:hover {
+  background: rgba(0, 240, 255, 0.3);
+  transform: scale(1.15);
+}
+.vf-point.seen {
+  background: var(--green-neon) !important;
+  box-shadow: 0 0 10px var(--green-glow);
+}
+.vf-point.not-seen {
+  background: var(--pink-neon) !important;
+  box-shadow: 0 0 10px var(--pink-glow);
+}
+
+/* Room 2 Patient D (Parietal - Neglect Plate) */
+.neglect-plate-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+}
+.neglect-plate {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.neglect-plate::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  border-left: 2px dashed rgba(255, 255, 255, 0.15);
+  transform: translateX(-50%);
+}
+.food-item {
+  position: absolute;
+  font-size: 24px;
+  cursor: pointer;
+  user-select: none;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.food-item:hover {
+  transform: translate(-50%, -50%) scale(1.25);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+}
+.food-item.eaten {
+  opacity: 0.15;
+  transform: translate(-50%, -50%) scale(0.6) !important;
+  pointer-events: none;
+  transition: all 0.5s ease;
+}
+#food-l1 { top: 25%; left: 25%; }
+#food-l2 { top: 50%; left: 15%; }
+#food-l3 { top: 75%; left: 25%; }
+#food-r1 { top: 25%; left: 75%; }
+#food-r2 { top: 50%; left: 85%; }
+#food-r3 { top: 75%; left: 75%; }
+
+/* Room 3 Patient A (Thalamus - Sensory Body Map) */
+.pain-map-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+}
+.pain-body-canvas {
+  display: flex;
+  width: 220px;
+  height: 180px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.body-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+  font-size: 11px;
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+#body-side-left {
+  color: var(--text-secondary);
+}
+#body-side-left:hover {
+  background: rgba(255, 0, 127, 0.05);
+  color: var(--pink-neon);
+}
+#body-side-right {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+#body-side-right:hover {
+  background: rgba(0, 240, 255, 0.05);
+  color: var(--blue-neon);
+}
+.body-side.active-pain {
+  background: rgba(255, 0, 127, 0.3) !important;
+  color: var(--pink-neon) !important;
+  box-shadow: inset 0 0 15px var(--pink-glow);
+  border-color: var(--pink-neon) !important;
+}
+.body-side.active-normal {
+  background: rgba(0, 240, 255, 0.2) !important;
+  color: var(--blue-neon) !important;
+  box-shadow: inset 0 0 15px var(--blue-glow);
+  border-color: var(--blue-neon) !important;
+}
+
+/* Room 3 Patient B (Subthalamus - Hemiballismus) */
+.ballismus-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 180px;
+  width: 100%;
+  margin: auto;
+}
+.ballismus-stage {
+  position: relative;
+  width: 200px;
+  height: 160px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+}
+.ballismus-pivot {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  background: var(--blue-neon);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px var(--blue-glow);
+  z-index: 10;
+}
+.ballismus-limb {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  width: 10px;
+  height: 80px;
+  background: linear-gradient(to bottom, var(--blue-neon), var(--purple-neon));
+  border-radius: 5px;
+  transform-origin: top center;
+  transform: translate(-50%, 0) rotate(0deg);
+  box-shadow: 0 0 10px var(--blue-glow);
+  transition: transform 0.08s ease-out;
+  z-index: 5;
+}
+.ballismus-limb::after {
+  content: '✊';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 20px;
+}
+
+/* Room 3 Patient C (Hypothalamus - Nystagmus Monitor) */
+.nystagmus-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  margin: auto;
+}
+.nystagmus-eyes {
+  display: flex;
+  gap: 24px;
+}
+.nystagmus-eyes .eye {
+  width: 72px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f8f7ff;
+  border: 2px solid var(--purple-neon);
+  box-shadow: 0 0 10px var(--purple-glow);
+}
+
+/* Room 3 Patient D (Epithalamus - Circadian Melatonin) */
+.circadian-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+}
+.circadian-chart {
+  width: 260px;
+  height: 160px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.circadian-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--font-display);
+}
+.melatonin-normal {
+  color: var(--blue-neon);
+  font-size: 10px;
+}
+.melatonin-tomas {
+  color: var(--pink-neon);
+  font-size: 10px;
+}
+
+/* Room 4 Patient A (Hypotonia - Knee Jerk) */
+.pendular-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  margin: auto;
+}
+.pendular-stage {
+  position: relative;
+  width: 180px;
+  height: 140px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.pendular-thigh {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+  width: 60px;
+  height: 12px;
+  background: #52525b;
+  border-radius: 6px;
+  transform: rotate(15deg);
+}
+.pendular-shin {
+  position: absolute;
+  top: 35px;
+  left: 95px;
+  width: 10px;
+  height: 75px;
+  background: linear-gradient(to bottom, #71717a, #52525b);
+  transform-origin: top center;
+  transform: rotate(0deg);
+  transition: transform 0.1s ease-out;
+  border-radius: 5px;
+}
+
+/* Room 4 Patient B (Dysdiadochokinesia - Hands) */
+.dysdiad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  margin: auto;
+}
+.dysdiad-hands {
+  display: flex;
+  gap: 60px;
+}
+.hand-test {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hand-palm {
+  font-size: 80px;
+  transition: transform 0.15s ease-in-out;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+.hand-test span {
+  font-family: var(--font-display);
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+.hand-text-normal {
+  font-size: 10px;
+  color: var(--blue-neon);
+}
+.hand-text-affected {
+  font-size: 10px;
+  color: var(--pink-neon);
+}
+
+/* Room 4 Patient C (Ataxia - Tandem walk) */
+.ataxia-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin: auto;
+  padding-top: 48px;
+}
+.ataxia-grid {
+  position: relative;
+  width: 260px;
+  height: 220px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-glass);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+}
+.ataxia-footprint {
+  position: absolute;
+  font-size: 16px;
+  opacity: 0;
+  animation: fadeInStep 0.4s forwards;
+}
+
+@keyframes fadeInStep {
+  to { opacity: 1; }
+}
+
+/* Room 4 Patient D (Intention Tremor) */
+.tremor-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 260px;
+  width: 100%;
+  margin: auto;
+  cursor: none;
+}
+.tremor-target-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px dashed var(--green-neon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green-neon);
+  font-family: var(--font-display);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px var(--green-glow);
+  background: rgba(57, 255, 20, 0.05);
+}
+.tremor-finger {
+  position: absolute;
+  font-size: 36px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+/* Room 5 & 6 Extensions */
+.mannequin-part.weak {
+  background: rgba(255, 0, 127, 0.25) !important;
+  border-color: var(--pink-neon) !important;
+  color: var(--pink-neon) !important;
+  box-shadow: 0 0 8px var(--pink-glow);
+}
+.mannequin-part.normal {
+  background: rgba(0, 240, 255, 0.15) !important;
+  border-color: var(--blue-neon) !important;
+  color: var(--blue-neon) !important;
+  box-shadow: 0 0 8px var(--blue-glow);
+}
+svg path.mannequin-weak, svg circle.mannequin-weak {
+  fill: rgba(255, 0, 127, 0.3) !important;
+  stroke: var(--pink-neon) !important;
+  filter: drop-shadow(0 0 5px var(--pink-neon));
+}
+svg path.mannequin-normal, svg circle.mannequin-normal {
+  fill: rgba(0, 240, 255, 0.2) !important;
+  stroke: var(--blue-neon) !important;
+  filter: drop-shadow(0 0 5px var(--blue-neon));
+}
+.synapse-molecule {
+  fill: var(--blue-neon);
+  filter: drop-shadow(0 0 3px var(--blue-glow));
+}
+.synapse-molecule.serotonin-low {
+  fill: var(--pink-neon);
+  filter: drop-shadow(0 0 3px var(--pink-glow));
+}
+.synapse-scanner-laser {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--blue-neon);
+  box-shadow: 0 0 8px var(--blue-neon);
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+.synapse-scanner-laser.scanning {
+  animation: laser-scan 1.5s ease-in-out forwards;
+}
+@keyframes laser-scan {
+  0% { top: 0%; opacity: 1; }
+  50% { top: 100%; opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.radar-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 48%, rgba(0, 240, 255, 0.3) 50%, transparent 52%);
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: radar-rotate 4s linear infinite;
+  z-index: 4;
+}
+@keyframes radar-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.vf-point-r6 {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border-glass);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.vf-point-r6:hover {
+  background: rgba(0, 240, 255, 0.3);
+  transform: scale(1.15);
+}
+.vf-point-r6.seen {
+  background: var(--green-neon) !important;
+  box-shadow: 0 0 10px var(--green-glow);
+}
+.vf-point-r6.not-seen {
+  background: var(--pink-neon) !important;
+  box-shadow: 0 0 10px var(--pink-glow);
+}
+.hand-svg.trembling {
+  animation: hand-tremble 0.08s linear infiniteAlternate;
+}
+@keyframes hand-tremble {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  50% { transform: translate(-1px, -1px) rotate(0.5deg); }
+  100% { transform: translate(1.5px, -1px) rotate(-0.5deg); }
+}
+.nystagmus-eyes .iris, .locked-in-eyes .iris {
+  transition: transform 0.03s linear !important;
+}
