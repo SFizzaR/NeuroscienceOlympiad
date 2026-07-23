@@ -2,7 +2,7 @@
 
 // Game State
 const TOTAL_TIME_MS = 45 * 60 * 1000; // 45 minutes
-const API_URL = 'http://localhost:3000/api/';
+const API_URL = 'https://neuroscienceolympiad-backend.onrender.com/api/';
 
 const state = {
   teamName: '',
