@@ -1,8 +1,15 @@
 {
-  "buildCommand": "echo 'Ready to deploy'",
-  "outputDirectory": "public",
-  "devCommand": "node server.js",
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ]
 }
