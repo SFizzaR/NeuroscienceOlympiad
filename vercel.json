@@ -1,8 +1,8 @@
 {
-  "buildCommand": "echo 'No build needed'",
+  "buildCommand": "echo 'Ready to deploy'",
   "outputDirectory": "public",
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/public/$1" }
-  ]
+  "devCommand": "node server.js",
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
