@@ -291,8 +291,6 @@ let timerInterval = null;
 let isPaused = false;
 let soundEnabled = true;
 let isSolved = false;
-const CROSSWORD_API_URL = 'https://neuroscienceolympiad-backend.onrender.com/api/crossword';
-
 // Audio Context for synthesized retro chimes
 let audioCtx = null;
 
@@ -965,11 +963,12 @@ async function verifyWord(word, wordIndex) {
   }
 
   try {
-    const response = await fetch(`${CROSSWORD_API_URL}/verify-word/${wordIndex}`, {
+    const response = await fetch(`/api/verifyCrossword?wordIndex=${wordIndex}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answer: submittedWord })
     });
+
     if (!response.ok) return false;
     const result = await response.json();
     return result.correct === true;
