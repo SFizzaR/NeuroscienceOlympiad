@@ -1,4 +1,4 @@
-const roomPins = require("../backend/data/roomPins");
+const roomPins = require("../public/data/roomsPins");
 
 module.exports = function handler(req, res) {
   if (req.method !== "POST") {
