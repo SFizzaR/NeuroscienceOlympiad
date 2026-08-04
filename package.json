@@ -2,7 +2,6 @@
   "name": "neuroscience-escape-room-with-crossword",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
   "dependencies": {
     "abbrev": "^3.0.1",
     "accepts": "^2.0.0",
