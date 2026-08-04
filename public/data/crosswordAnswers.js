@@ -1,4 +1,4 @@
-export default Object.freeze([
+module.exports = Object.freeze([
   'HIPPOCAMPUS', 'CEREBELLUM', 'SEROTONIN', 'APHASIA', 'EPILEPSY',
   'MYASTHENIA', 'MICROGLIA', 'ALZHEIMER', 'CORTEX', 'NOCICEPTOR',
   'AMYGDALA', 'GLUTAMATE', 'GLIOMA', 'DEMENTIA', 'VENTRICLE',
