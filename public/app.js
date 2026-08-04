@@ -2,8 +2,6 @@
 
 // Game State
 const TOTAL_TIME_MS = 45 * 60 * 1000; // 45 minutes
-const API_URL = 'https://neuroscienceolympiad-backend.onrender.com/api/';
-
 const state = {
   teamName: '',
   startTime: null,
@@ -607,42 +605,52 @@ async function handleStartGame() {
   }
 
   const codeInput = accessCodeInput.value.trim().toUpperCase();
-  fetch(`${API_URL}participants/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ team_name: teamInput, code: codeInput })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.message === "Participant created successfully") {
+
+  async function loginTeam(teamName, accessCode) {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        team_name: teamName,
+        code: accessCode
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Login failed');
+    }
+
+    return response.json();
+  }
+
+  try {
+    const data = await loginTeam(teamInput, codeInput);
+
+    if (data.message === 'Participant created successfully') {
       state.teamName = teamInput;
       teamNameDisplay.textContent = state.teamName;
-      
-      // Start the game only on success
+
       introScreen.classList.remove('active');
       mainScreen.classList.add('active');
-      
+
       headerTeamBadge.style.display = 'flex';
       timerDisplay.style.display = 'block';
-      
+
       state.currentRoom = 1;
       renderRoom();
       startTimer();
     } else {
-      // Show the error message from the server
       alert(data.message || 'Invalid access code. Please try again.');
       accessCodeInput.value = '';
       accessCodeInput.focus();
     }
-  })
-  .catch(error => {
+  } catch (error) {
     console.error('Error:', error);
     alert('An error occurred while trying to start the game. Please check your connection and try again.');
     accessCodeInput.value = '';
     accessCodeInput.focus();
-  });
+  }
 }
 
 function handleRestart() {
@@ -1911,39 +1919,47 @@ function updateKeypadDisplay() {
 
 async function handleSubmitPIN() {
   if (state.gameCompleted) return;
-  
+
   if (state.pinCode.length < 4) {
     alert('Security system requires a complete 4-digit passcode.');
     return;
   }
-  
+
   const submittedPin = state.pinCode;
 
   try {
-    const response = await fetch(`${API_URL}rooms/${state.currentRoom}/verify-pin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin: submittedPin })
-    });
+    async function verifyRoomPin(roomNumber, pin) {
+      const response = await fetch(`/api/verifyPin?roomNumber=${roomNumber}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin })
+      });
 
-    if (!response.ok) throw new Error('PIN verification request failed');
+      if (!response.ok) {
+        throw new Error('PIN verification request failed');
+      }
 
-    const result = await response.json();
-    if (result.correct === true) {
-    handleRoomSuccess();
-    } else {
-    state.wrongPinAttempts++;
-    if (state.wrongPinAttempts >= 3) {
-      handleRoomFailure();
-    } else {
-      handleEscapeFailure();
+      return response.json();
     }
+
+    const result = await verifyRoomPin(state.currentRoom, submittedPin);
+
+    if (result.correct === true) {
+      handleRoomSuccess();
+    } else {
+      state.wrongPinAttempts++;
+      if (state.wrongPinAttempts >= 3) {
+        handleRoomFailure();
+      } else {
+        handleEscapeFailure();
+      }
     }
   } catch (error) {
     console.error('Unable to verify PIN:', error);
     alert('Security system is unavailable. Please try again.');
   }
 }
+
 
 function handleRoomSuccess() {
   state.roomsSucceeded++;
@@ -2086,25 +2102,25 @@ function handleEscapeSuccess() {
 // New function to save room score
 async function saveRoomScore(roomPoints, escapeBonus) {
   try {
-    const response = await fetch(`${API_URL}participants/savescore`, {
+    const totalScore = roomPoints + escapeBonus;
+    const response = await fetch('/api/savescore', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         teamName: state.teamName,
-        roomPoints: Number(roomPoints+escapeBonus),
+        roomPoints: totalScore
       })
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to save room score');
     }
-    
-    console.log('Room score saved successfully:', roomPoints);
+
+    console.log('Room score saved successfully:', totalScore);
   } catch (error) {
     console.error('Error saving room score:', error);
   }
 }
-
 function handleEscapeFailure() {
   keypadWrapper.classList.add('shake');
   pinDisplay.textContent = 'DENIED';
@@ -2282,16 +2298,17 @@ async function showCombinedSummary() {
 // New function to save crossword score
 async function saveCrosswordScore(crosswordPoints, total) {
   try {
-    const response = await fetch(`${API_URL}participants/savescore`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        teamName: state.teamName,
-        crosswordPoints: Number(crosswordPoints),
-        score: Number(total)
-
-      })
-    });
+   async function saveRoomScore(teamName, points) {
+  const response = await fetch('/api/savescore', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      teamName: teamName, 
+      roomPoints: points 
+    })
+  });
+  return response.json();
+}
     
     if (!response.ok) {
       throw new Error('Failed to save crossword score');
@@ -2302,7 +2319,6 @@ async function saveCrosswordScore(crosswordPoints, total) {
     console.error('Error saving crossword score:', error);
   }
 }
-
 // CROSSWORD FLOW
 function handleStartCrossword(fromScreenId) {
   document.getElementById(fromScreenId).classList.remove('active');
