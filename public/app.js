@@ -423,8 +423,6 @@ const crosswordScreen = document.getElementById('crossword-screen');
 const crosswordFrame = document.getElementById('crossword-frame');
 const startCrosswordBtn = document.getElementById('start-crossword-btn');
 const startCrosswordBtnLoss = document.getElementById('start-crossword-btn-loss');
-const backFromCrosswordBtn = document.getElementById('back-from-crossword-btn');
-let crosswordReturnScreen = null; // tracks which screen to return to ('escape-screen' or 'loss-screen')
 
 // Combined Summary Screen Elements
 const combinedSummaryScreen = document.getElementById('combined-summary-screen');
@@ -494,7 +492,6 @@ function setupEventListeners() {
   shareBtn.addEventListener('click', handleShareSummary);
   startCrosswordBtn.addEventListener('click', () => handleStartCrossword('escape-screen'));
   startCrosswordBtnLoss.addEventListener('click', () => handleStartCrossword('loss-screen'));
-  backFromCrosswordBtn.addEventListener('click', handleBackFromCrossword);
   combinedRestartBtn.addEventListener('click', handleRestart);
   combinedShareBtn.addEventListener('click', handleCombinedShare);
 
@@ -684,7 +681,6 @@ function handleRestart() {
   crosswordScreen.classList.remove('active');
   combinedSummaryScreen.classList.remove('active');
   crosswordFrame.src = 'about:blank';
-  crosswordReturnScreen = null;
   state.crosswordStats = null;
   appHeader.style.display = '';
   introScreen.classList.add('active');
@@ -2310,28 +2306,12 @@ async function saveCrosswordScore(crosswordPoints, total) {
 
 // CROSSWORD FLOW
 function handleStartCrossword(fromScreenId) {
-  crosswordReturnScreen = fromScreenId;
-
   document.getElementById(fromScreenId).classList.remove('active');
   crosswordScreen.classList.add('active');
   appHeader.style.display = 'none';
 
   // Force a fresh load each time so the puzzle/timer always starts clean
   crosswordFrame.src = 'crossword/index.html?session=' + Date.now();
-}
-
-function handleBackFromCrossword() {
-  crosswordScreen.classList.remove('active');
-  appHeader.style.display = '';
-
-  if (crosswordReturnScreen) {
-    document.getElementById(crosswordReturnScreen).classList.add('active');
-  } else {
-    escapeScreen.classList.add('active');
-  }
-
-  // Free up resources / stop any timers or audio running inside the crossword
-  crosswordFrame.src = 'about:blank';
 }
 
 // CONFETTI EFFECT
