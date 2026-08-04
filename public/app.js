@@ -108,7 +108,7 @@ const roomsData = [
         name: 'Robert Hale',
         ageSex: '58 / Male',
         vitals: 'Stable (HR 76, BP 130/82)',
-        history: 'Two days after a minor head injury, Robert\'s family says he has become uncharacteristically impulsive, cracking inappropriate jokes at his mother\'s funeral, and unable to follow through on simple household plans. Strength, speech, and memory all test normal.',
+        history: 'Two days after a minor head injury on the right side, Robert\'s family says he has become uncharacteristically impulsive, cracking inappropriate jokes at his mother\'s funeral, and unable to follow through on simple household plans. Strength, speech, and memory all test normal.',
         summary: 'A 58-year-old male who has become highly impulsive and disorganized after a head injury.',
         tools: [
           { id: 'observe_behavior', label: 'OBSERVE BEHAVIOR' }
