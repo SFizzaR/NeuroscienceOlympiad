@@ -1,4 +1,4 @@
-const answers = require("../backend/data/crosswordAnswers");
+const answers = require("../public/data/crosswordAnswers");
 
 module.exports = function handler(req, res) {
   if (req.method !== "POST") {
