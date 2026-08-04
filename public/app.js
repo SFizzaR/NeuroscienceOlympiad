@@ -440,7 +440,6 @@ const SCORE_CONFIG = {
 
   escapeTimeBonusMax: 200,     // full bonus if escaped instantly, scales down to 0 at the 45-min mark
   crosswordBase: 200,          // flat points for finishing the crossword at all
-  crosswordHintPenalty: 20,    // deducted per hint used (max 3 hints = -60)
   crosswordTimeBonusMax: 200,  // full bonus if solved instantly, scales down to 0 at crosswordTimeCapSeconds
   crosswordTimeCapSeconds: 15 * 60 // 15 minutes - matches the crossword's own countdown limit
 };
@@ -2194,7 +2193,6 @@ window.addEventListener('message', (event) => {
 
   state.crosswordStats = {
     timeSeconds: event.data.timeSeconds,
-    hintsUsed: event.data.hintsUsed,
     wordsSolved: event.data.wordsSolved,
     totalWords: event.data.totalWords,
     completed: event.data.completed,
@@ -2234,23 +2232,20 @@ async function showCombinedSummary() {
   // --- Crossword points ---
   let crosswordPoints = 0;
   if (cw) {
-    const hintsUsed = cw.hintsUsed ?? 0;
     const completed = cw.completed ?? false;
     const timeSeconds = cw.timeSeconds ?? SCORE_CONFIG.crosswordTimeCapSeconds;
     const wordsSolved = cw.wordsSolved ?? 0;
     const totalWords = cw.totalWords ?? 1;
 
-    const hintPenalty = hintsUsed * SCORE_CONFIG.crosswordHintPenalty;
-    
     if (completed) {
       const crosswordTimeBonus = Math.round(
         SCORE_CONFIG.crosswordTimeBonusMax *
         Math.max(0, (SCORE_CONFIG.crosswordTimeCapSeconds - timeSeconds) / SCORE_CONFIG.crosswordTimeCapSeconds)
       );
-      crosswordPoints = Math.max(0, SCORE_CONFIG.crosswordBase + crosswordTimeBonus - hintPenalty);
+      crosswordPoints = Math.max(0, SCORE_CONFIG.crosswordBase + crosswordTimeBonus);
     } else {
       const partialBase = Math.round(SCORE_CONFIG.crosswordBase * (wordsSolved / totalWords));
-      crosswordPoints = Math.max(0, partialBase - hintPenalty);
+      crosswordPoints = Math.max(0, partialBase);
     }
   }
 
@@ -2283,7 +2278,6 @@ async function showCombinedSummary() {
 
   document.getElementById('combined-escape-bonus').textContent = escapeBonus;
   document.getElementById('combined-crossword-time').textContent = cw ? formatCrosswordTime(cw.timeSeconds ?? 0) : '-';
-  document.getElementById('combined-crossword-hints').textContent = cw ? (cw.hintsUsed ?? 0) : '-';
   document.getElementById('combined-crossword-rank').textContent = cw ? (cw.rank ?? 'Incomplete') : '-';
   document.getElementById('combined-crossword-points').textContent = crosswordPoints;
 
