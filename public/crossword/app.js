@@ -686,10 +686,6 @@ function setupEventListeners() {
       document.querySelector(".icon-sound-off").classList.remove("hidden");
     }
   });
-  document.getElementById("playAgainBtn").addEventListener("click", () => {
-    document.getElementById("victoryOverlay").classList.add("hidden");
-    resetGame();
-  });
 
   // Popover close
   document.getElementById("closePopoverBtn").addEventListener("click", () => {
