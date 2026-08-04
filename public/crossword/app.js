@@ -285,7 +285,6 @@ let grid = []; // 2D array of grid cells
 let cellToWordMap = {}; // Maps key `x,y` to array of words passing through it
 let activeCell = { x: 0, y: 0 };
 let activeDirection = 'across'; // 'across' or 'down'
-let hintsLeft = 3;
 let timerSeconds = 0;
 const CROSSWORD_TIME_LIMIT_SECONDS = 15 * 60; // 15 minutes
 let timerInterval = null;
@@ -687,27 +686,6 @@ function setupEventListeners() {
       document.querySelector(".icon-sound-off").classList.remove("hidden");
     }
   });
-
-
-
-  // Hint Logic
-  const hintBtn = document.getElementById("hintBtn");
-  const hintMenu = document.getElementById("hintMenu");
-  hintBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (hintsLeft > 0 && !isSolved && !isPaused) {
-      hintMenu.classList.toggle("hidden");
-    }
-  });
-
-  document.addEventListener("click", () => {
-    hintMenu.classList.add("hidden");
-  });
-
-  document.getElementById("hintRevealCell").addEventListener("click", revealActiveCell);
-  document.getElementById("hintRevealWord").addEventListener("click", revealActiveWord);
-  document.getElementById("hintCheckCell").addEventListener("click", checkActiveCell);
-
   document.getElementById("playAgainBtn").addEventListener("click", () => {
     document.getElementById("victoryOverlay").classList.add("hidden");
     resetGame();
@@ -928,11 +906,9 @@ function handleCrosswordTimeout() {
   isSolved = true; // reuses the existing "solved" gate to block further input
   clearInterval(timerInterval);
 
-  const hintsUsed = 3 - hintsLeft;
   const wordsSolved = countSolvedWords();
 
   document.getElementById("timeoutWordsSolved").textContent = `${wordsSolved} / ${words.length}`;
-  document.getElementById("timeoutHintsUsed").textContent = hintsUsed;
   document.getElementById("timeoutOverlay").classList.remove("hidden");
 
   const finishBtn = document.getElementById("timeoutFinishBtn");
@@ -943,7 +919,6 @@ function handleCrosswordTimeout() {
           type: 'crossword-finished',
           completed: false,
           timeSeconds: CROSSWORD_TIME_LIMIT_SECONDS,
-          hintsUsed: hintsUsed,
           wordsSolved: wordsSolved,
           totalWords: words.length,
           rank: 'Incomplete'
@@ -982,72 +957,6 @@ function togglePause() {
     playSound('click');
   }
   highlightActiveElements();
-}
-
-// --- Hints Management ---
-function updateHintUI() {
-  document.getElementById("hintCount").textContent = hintsLeft;
-  if (hintsLeft <= 0) {
-    const hintBtn = document.getElementById("hintBtn");
-    hintBtn.classList.add("btn-outline");
-    hintBtn.classList.remove("btn-secondary");
-    hintBtn.disabled = true;
-    hintBtn.style.opacity = "0.5";
-  }
-}
-
-function useHint() {
-  if (hintsLeft <= 0) return false;
-  hintsLeft--;
-  updateHintUI();
-  return true;
-}
-
-// Reveal current cell
-function revealActiveCell() {
-  if (hintsLeft <= 0 || isSolved || isPaused) return;
-  
-  const cell = grid[activeCell.y][activeCell.x];
-  if (cell.isBlack) return;
-
-  alert("Hints cannot reveal answers. Use the check function to validate your entries.");
-}
-
-// Reveal active word
-function revealActiveWord() {
-  if (hintsLeft <= 0 || isSolved || isPaused) return;
-
-  const cell = grid[activeCell.y][activeCell.x];
-  if (cell.isBlack) return;
-
-  const activeWord = cell.words.find(w => w.dir === activeDirection) || cell.words[0];
-  if (!activeWord) return;
-
-  // Verify if it needs reveal (at least one letter incorrect or missing)
-  alert("Hints cannot reveal answers. Use the check function to validate your entries.");
-}
-
-// Validate if active cell's current input is correct
-async function checkActiveCell() {
-  if (hintsLeft <= 0 || isSolved || isPaused) return;
-
-  const cell = grid[activeCell.y][activeCell.x];
-  if (cell.isBlack || cell.userLetter === "") return;
-
-  if (useHint()) {
-    const activeWord = cell.words.find(w => w.dir === activeDirection) || cell.words[0];
-    const wordIndex = words.indexOf(activeWord);
-    const correct = await verifyWord(activeWord, wordIndex);
-    const clueEl = document.getElementById(`clue-${activeWord.dir}-${activeWord.number}`);
-    if (clueEl) clueEl.classList.toggle('clue-solved', correct);
-
-    if (correct) {
-      playSound('correct-word');
-    } else {
-      cell.element.classList.add('cell-incorrect');
-      playSound('error');
-    }
-  }
 }
 
 // --- Check Board status and verify solution ---
@@ -1093,15 +1002,14 @@ function triggerVictory() {
   clearInterval(timerInterval);
   playSound('victory');
   
-  // Calculate Medical rank
-  const hintsUsed = 3 - hintsLeft;
+  // Calculate Medical rank (time-based only)
   let rank = "Medical Student";
 
-  if (timerSeconds < 180 && hintsUsed === 0) {
+  if (timerSeconds < 180) {
     rank = "Chief of Neurosurgery 👑";
-  } else if (timerSeconds < 360 && hintsUsed <= 1) {
+  } else if (timerSeconds < 360) {
     rank = "Attending Neurologist 🧠";
-  } else if (timerSeconds < 540 && hintsUsed <= 2) {
+  } else if (timerSeconds < 540) {
     rank = "Neuroscience Fellow 🔬";
   } else if (timerSeconds < 900) {
     rank = "Neurology Resident 🩺";
@@ -1109,7 +1017,6 @@ function triggerVictory() {
 
   // Display stats
   document.getElementById("victoryTime").textContent = formatTime(timerSeconds);
-  document.getElementById("victoryHints").textContent = hintsUsed;
   document.getElementById("victoryRank").textContent = rank;
 
   // BuildSolved word chips for explanations
@@ -1143,7 +1050,6 @@ function triggerVictory() {
           type: 'crossword-finished',
           completed: true,
           timeSeconds: timerSeconds,
-          hintsUsed: hintsUsed,
           wordsSolved: words.length,
           totalWords: words.length,
           rank: rank
@@ -1238,7 +1144,6 @@ function resetGame() {
   timerSeconds = 0;
   isPaused = false;
   isSolved = false;
-  hintsLeft = 3;
   
   document.getElementById("timerText").textContent = formatTime(CROSSWORD_TIME_LIMIT_SECONDS);
   document.getElementById("timerContainer").classList.remove("timer-warning");
@@ -1249,13 +1154,6 @@ function resetGame() {
   document.getElementById("pauseIcon").classList.remove("hidden");
   document.getElementById("playIcon").classList.add("hidden");
 
-  // Reset hint UI
-  const hintBtn = document.getElementById("hintBtn");
-  hintBtn.classList.remove("btn-outline");
-  hintBtn.classList.add("btn-secondary");
-  hintBtn.disabled = false;
-  hintBtn.style.opacity = "1";
-  updateHintUI();
 
   // Reset board data
   for (let y = 0; y < boardHeight; y++) {
