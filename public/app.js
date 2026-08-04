@@ -493,7 +493,6 @@ function setupEventListeners() {
   startCrosswordBtn.addEventListener('click', () => handleStartCrossword('escape-screen'));
   startCrosswordBtnLoss.addEventListener('click', () => handleStartCrossword('loss-screen'));
   combinedRestartBtn.addEventListener('click', handleRestart);
-  combinedShareBtn.addEventListener('click', handleCombinedShare);
 
   // Proctor-only reset shortcut (Ctrl+Shift+R). No visible button on the win/loss/crossword
   // screens so participants can't reset mid-run or re-roll their result; the proctor can still
