@@ -1,5 +1,5 @@
 // Keep room PINs in the backend. Do not expose this module through an API.
-export default Object.freeze({
+module.exports = Object.freeze({
   1: '3756',
   2: '2574',
   3: '1423',
