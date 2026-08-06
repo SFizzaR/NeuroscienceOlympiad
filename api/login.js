@@ -22,10 +22,12 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    console.log("Supabase Admin Client:", supabaseAdmin); // Debugging line
+    
     if (!supabaseAdmin || !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      return res.status(201).json({
-        message: "Participant created successfully",
-        participant: { team_name, id: "local-dev" },
+     return res.status(500).json({
+        message: "Supabase client unavailable",
+        error: "Supabase client is not properly configured"
       });
     }
 
