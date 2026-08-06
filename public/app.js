@@ -2266,7 +2266,7 @@ async function showCombinedSummary() {
 
 
   // Save crossword score to database
-  await saveCrosswordScore(crosswordPoints, total);
+  await saveCrosswordScore(state.teamName, crosswordPoints, total);
 
   // --- Populate UI ---
   document.getElementById('combined-team-name').textContent = state.teamName;
@@ -2296,19 +2296,18 @@ async function showCombinedSummary() {
 }
 
 // New function to save crossword score
-async function saveCrosswordScore(crosswordPoints, total) {
+async function saveCrosswordScore(teamName, crosswordPoints, total) {
   try {
-   async function saveRoomScore(teamName, points) {
   const response = await fetch('/api/savescore', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
       teamName: teamName, 
-      roomPoints: points 
+      crosswordPoints: crosswordPoints,
+      total: total
     })
   });
   return response.json();
-}
     
     if (!response.ok) {
       throw new Error('Failed to save crossword score');
