@@ -2263,6 +2263,7 @@ async function showCombinedSummary() {
   const total = roomPoints + escapeBonus + crosswordPoints;
 
   console.log('Score breakdown:', { roomPoints, escapeBonus, crosswordPoints, total });
+  console.log("team:", state.teamName);
 
 
   // Save crossword score to database
@@ -2311,6 +2312,7 @@ async function saveCrosswordScore(teamName, crosswordPoints, total) {
     
     if (!response.ok) {
       throw new Error('Failed to save crossword score');
+      console.error('Failed to save crossword score:', response);
     }
     
     console.log('Crossword score saved successfully:', crosswordPoints);
