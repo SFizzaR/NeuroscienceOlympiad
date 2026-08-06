@@ -2304,7 +2304,7 @@ async function saveCrosswordScore(teamName, crosswordPoints, total) {
     body: JSON.stringify({ 
       teamName: teamName, 
       crosswordPoints: crosswordPoints,
-      total: total
+      score: total
     })
   });
   return response.json();
