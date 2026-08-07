@@ -4,49 +4,28 @@ module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-
+if (!supabaseAdmin || !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return res.status(500).json({
+      message: "Supabase client unavailable",
+      error: "Supabase client is not properly configured"
+    });
+  }
   try {
     const { teamName, roomPoints, crosswordPoints, score } = req.body;
 
-    if (!teamName) {
+    if (!teamName || !roomPoints || !crosswordPoints || !score) {
       return res.status(400).json({
-        message: "Team name is required",
-        error: "Missing team name",
+        message: "All fields are required",
+        error: "Missing required fields",
       });
     }
 
-    if (!supabaseAdmin || !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      return res.status(200).json({
-        message: "Score saved successfully",
-        participant: { team_name: teamName },
-      });
-    }
-
-    if (roomPoints !== undefined) {
-      const { data: participant, error: updateError } = await supabaseAdmin
-        .from("participants")
-        .update({ room_score: roomPoints })
-        .eq("team_name", teamName)
-        .select()
-        .single();
-
-      if (updateError) {
-        return res.status(500).json({
-          message: "Failed to update room score",
-          error: updateError.message,
-        });
-      }
-
-      return res.status(200).json({
-        message: "Room score saved successfully",
-        participant,
-      });
-    }
-
-    if (crosswordPoints !== undefined && score !== undefined) {
+   else{
+   
       const { data: updatedParticipant, error: updateError } = await supabaseAdmin
         .from("participants")
         .update({
+          room_score: parseFloat(roomPoints),
           crossword_score: parseFloat(crosswordPoints),
           score: parseFloat(score),
         })
@@ -66,10 +45,6 @@ module.exports = async function handler(req, res) {
         participant: updatedParticipant,
       });
     }
-
-    return res.status(400).json({
-      message: "Either roomPoints or crosswordPoints must be provided",
-    });
   } catch (error) {
     console.error("Save score error:", error);
     return res.status(500).json({
