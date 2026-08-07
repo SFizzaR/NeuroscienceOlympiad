@@ -2070,6 +2070,7 @@ function handleEscapeSuccess() {
   console.log('Escape bonus calculated:', escapeBonus);
   
   // Save room score to database
+  saveRoomScore(roomPoints, escapeBonus);
   
   mainScreen.classList.remove('active');
   escapeScreen.classList.add('active');
@@ -2099,7 +2100,27 @@ function handleEscapeSuccess() {
 }
 
 // New function to save room score
+async function saveRoomScore(roomPoints, escapeBonus) {
+  try {
+    const totalScore = roomPoints + escapeBonus;
+    const response = await fetch('/api/savescore', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        teamName: state.teamName,
+        roomPoints: totalScore
+      })
+    });
 
+    if (!response.ok) {
+      throw new Error('Failed to save room score');
+    }
+
+    console.log('Room score saved successfully:', totalScore);
+  } catch (error) {
+    console.error('Error saving room score:', error);
+  }
+}
 function handleEscapeFailure() {
   keypadWrapper.classList.add('shake');
   pinDisplay.textContent = 'DENIED';
@@ -2245,7 +2266,7 @@ async function showCombinedSummary() {
 
 
   // Save crossword score to database
-  await saveScore(state.teamName, crosswordPoints, total, roomPoints, escapeBonus);
+  await saveCrosswordScore(state.teamName, crosswordPoints, total);
 
   // --- Populate UI ---
   document.getElementById('combined-team-name').textContent = state.teamName;
@@ -2275,7 +2296,7 @@ async function showCombinedSummary() {
 }
 
 // New function to save crossword score
-async function saveScore(teamName, crosswordPoints, total, roomPoints, escapeBonus) {
+async function saveCrosswordScore(teamName, crosswordPoints, total) {
   try {
   const response = await fetch('/api/savescore', {
     method: 'POST',
@@ -2283,8 +2304,7 @@ async function saveScore(teamName, crosswordPoints, total, roomPoints, escapeBon
     body: JSON.stringify({ 
       teamName: teamName, 
       crosswordPoints: crosswordPoints,
-      score: total,
-      roomPoints: roomPoints+escapeBonus
+      score: total
     })
   });
   return response.json();
