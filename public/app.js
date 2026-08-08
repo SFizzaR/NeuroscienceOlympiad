@@ -2275,25 +2275,26 @@ async function showCombinedSummary() {
 // New function to save crossword score
 async function saveScore(teamName, crosswordPoints, total, roomPoints, escapeBonus) {
   try {
-  const response = await fetch('/api/savescore', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      teamName: teamName, 
-      crosswordPoints: crosswordPoints,
-      score: total,
-      roomPoints: roomPoints + escapeBonus
-    })
-  });
-  return response.json();
-    
+    const response = await fetch('/api/savescore', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        teamName: teamName, 
+        crosswordPoints: crosswordPoints,
+        score: total,
+        roomPoints: roomPoints + escapeBonus  // ✅ COLON
+      })
+    });
+
     if (!response.ok) {
-      throw new Error('Failed to save crossword score');
+      throw new Error('Failed to save score');
     }
     
-    console.log('Crossword score saved successfully:', crosswordPoints);
+    const data = await response.json();
+    console.log('Score saved successfully:', total);
+    return data;
   } catch (error) {
-    console.error('Error saving crossword score:', error);
+    console.error('Error saving score:', error);
   }
 }
 // CROSSWORD FLOW
