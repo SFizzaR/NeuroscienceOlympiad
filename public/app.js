@@ -2282,7 +2282,7 @@ async function saveScore(teamName, crosswordPoints, total, roomPoints, escapeBon
       teamName: teamName, 
       crosswordPoints: crosswordPoints,
       score: total,
-      roomPoints; roomPoints + escapeBonus
+      roomPoints: roomPoints + escapeBonus
     })
   });
   return response.json();
