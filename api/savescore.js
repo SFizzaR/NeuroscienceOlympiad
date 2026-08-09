@@ -31,7 +31,7 @@ if (!supabaseAdmin || !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE
         })
         .eq("team_name", teamName)
         .select()
-        .single();
+        .maybeSingle();
 
       if (updateError) {
         return res.status(500).json({
