@@ -2,18 +2,22 @@ const supabaseAdmin = require("../config/supabaseAdmin");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
   }
 
   try {
     const { team_name, code } = req.body;
 
+    // Validate required fields
     if (!team_name || !code) {
       return res.status(400).json({
         message: "Team name and access code are required",
       });
     }
 
+    // Validate access code
     const expectedCode = process.env.ACCESS_CODE;
 
     if (code !== expectedCode) {
@@ -22,40 +26,33 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    console.log("Supabase Admin Client:", supabaseAdmin); // Debugging line
-    
-    if (!supabaseAdmin || !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-     return res.status(500).json({
-        message: "Supabase client unavailable",
-        error: "Supabase client is not properly configured"
-      });
-    }
-
-    const { data: existingUser, error: fetchError } = await supabaseAdmin
-      .from("participants")
-      .select("id")
-      .eq("team_name", team_name)
-      .maybeSingle();
-
-    if (fetchError) {
+    // Check Supabase configuration
+    if (
+      !supabaseAdmin ||
+      !process.env.SUPABASE_URL ||
+      !process.env.SUPABASE_SERVICE_ROLE_KEY
+    ) {
       return res.status(500).json({
-        message: "Error checking participant",
-        error: fetchError.message,
+        message: "Supabase client unavailable",
+        error: "Supabase client is not properly configured",
       });
     }
 
-    if (existingUser) {
-      return res.status(409).json({
-        message: "Participant already exists",
-      });
-    }
-
+    // Insert participant
     const { data: participant, error: insertError } = await supabaseAdmin
       .from("participants")
       .insert({ team_name })
       .select()
       .single();
 
+    // Handle duplicate team
+    if (insertError && insertError.code === "23505") {
+      return res.status(409).json({
+        message: "Team already logged in",
+      });
+    }
+
+    // Handle other database errors
     if (insertError) {
       return res.status(500).json({
         message: "Failed to create participant",
@@ -63,15 +60,18 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    // Success
     return res.status(201).json({
       message: "Participant created successfully",
       participant,
     });
   } catch (error) {
     console.error("Login error:", error);
+
     return res.status(500).json({
       message: "Internal server error",
       error: error.message,
     });
   }
 };
+
