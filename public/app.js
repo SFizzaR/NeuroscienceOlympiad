@@ -264,7 +264,7 @@ const roomsData = [
   {
     number: 5,
     name: 'The Neurochemistry Lab',
-    instructions: 'Enter the 4-digit diagnostic PIN to release the locks. Identify the deficient neurotransmitter from the clinical picture (A to D) using the key: <strong>Dopamine=1, Serotonin=2, GABA=3, Glutamate=4, Acetylcholine=5, Norepinephrine=6</strong>.',
+    instructions: 'Enter the 4-digit diagnostic PIN to release the locks. Identify the affected neurotransmitter from the clinical picture (A to D) using the key: <strong>Dopamine=1, Serotonin=2, GABA=3, Glutamate=4, Acetylcholine=5, Norepinephrine=6</strong>.',
     patients: {
       a: {
         id: 'PATIENT A',
