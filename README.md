@@ -9,9 +9,7 @@ A competitive neuroscience quiz and crossword platform built for AKUH SIMPCAT 20
  
 This platform was created for the Neuroscience Olympiad competition at AKUH SIMPCAT 2026. It challenges participants with:
 - **Quiz rounds** — Multiple choice questions on neuroscience topics
-- **Crossword puzzles** — Brain-themed crosswords to test subject knowledge
-The original Electron desktop application was migrated to a web-based deployment for broader accessibility.
- 
+- **Crossword puzzles** — Brain-themed crosswords to test subject knowledge 
 ## Tech Stack
  
 - **Backend:** Node.js with `server.js` (vanilla server, no framework)
